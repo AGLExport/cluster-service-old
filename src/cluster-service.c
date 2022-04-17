@@ -41,18 +41,186 @@
 #include <systemd/sd-daemon.h>
 #include <systemd/sd-event.h>
 
-static int data_pool_incoming_handler(sd_event_source *es, int fd, uint32_t revents, void *userdata) {
-	int datafd = -1;
+
+
+/** data pool service session list */
+struct s_data_pool_session {
+	struct s_data_pool_session *next;	/**< pointer to next session*/
+	sd_event_source *socket_evsource;	/**< UNIX Domain socket event source for data pool service */
+};
+
+/** data pool service handles */
+struct s_data_pool_service {
+	sd_event *parent_eventloop;			/**< UNIX Domain socket event source for data pool service */
+	sd_event_source *socket_evsource;	/**< UNIX Domain socket event source for data pool service */
+	sd_event_source *timer_evsource;	/**< Timer event source for data pool service  */
+	struct s_data_pool_session *session_list;
+};
+typedef struct s_data_pool_service *data_pool_service_handle;
+
+
+/**
+ * Event handler for server socket to use incoming event
+ *
+ * @param [in]	event		Socket event source object
+ * @param [in]	fd			File discriptor for socket session
+ * @param [in]	revents		Active event (epooll)
+ * @param [in]	userdata	Pointer to data_pool_service_handle
+ * @return int	 0 success
+ *				-1 internal error
+ */
+AGLCLUSTER_SERVICE_PACKET packet;
+
+static int data_pool_message_passanger(data_pool_service_handle dp) {
+	struct s_data_pool_session *listp = NULL;
+	int fd = -1;
+	int ret = -1;
 	
+	packet.header.seqnum++;
+	
+	if (dp->session_list != NULL) {
+		listp = dp->session_list;
+		
+		for(int i=0; i < 1000;i++) {
+			fd = sd_event_source_get_io_fd(listp->socket_evsource);
+			ret = write(fd, &packet, sizeof(packet));
+			if (ret < 0) {
+				//TODO
+			}
+			
+			if (listp->next != NULL) {
+				listp = listp->next;
+			} else {
+				break;
+			}
+		}
+	}
+	
+	return 0;
+}
+
+/**
+ * Event handler for server session socket
+ *
+ * @param [in]	event		Socket event source object
+ * @param [in]	fd			File discriptor for socket session
+ * @param [in]	revents		Active event (epooll)
+ * @param [in]	userdata	Pointer to data_pool_service_handle
+ * @return int	 0 success
+ *				-1 internal error
+ */
+static int data_pool_sessions_handler(sd_event_source *event, int fd, uint32_t revents, void *userdata) {
+	sd_event_source *socket_source = NULL;
+	data_pool_service_handle dp = (data_pool_service_handle)userdata;
+	struct s_data_pool_session *privp = NULL;
+	struct s_data_pool_session *listp = NULL;
+	int sessionfd = -1;
+	int ret = -1;
+	
+	if ((revents & (EPOLLHUP | EPOLLERR)) != 0) {
+		// Disconnect session
+		
+		if (dp->session_list != NULL) {
+			listp = dp->session_list;
+			for(int i=0; i < 1000;i++) {
+				if (listp->socket_evsource == event) {
+					if (privp == NULL) {
+						dp->session_list = listp->next;
+					} else {
+						privp->next = listp->next;
+					}
+					listp->socket_evsource = sd_event_source_disable_unref(listp->socket_evsource);
+					free(listp);
+					break;
+				}
+				privp = listp;
+				listp = listp->next;
+			}
+		} else {
+			sd_event_source_disable_unref(event);
+		}
+		fprintf(stderr,"Client disconnect\n");
+		return -1;
+	}
 	if ((revents & EPOLLIN) != 0) {
-		datafd = accept4(fd, NULL, NULL,SOCK_NONBLOCK|SOCK_CLOEXEC);
-		if (datafd == -1) {
+		// Receive
+		
+		//TODO
+	}
+
+	return 0;
+}
+
+/**
+ * Event handler for server socket to use incoming event
+ *
+ * @param [in]	event		Socket event source object
+ * @param [in]	fd			File discriptor for socket session
+ * @param [in]	revents		Active event (epooll)
+ * @param [in]	userdata	Pointer to data_pool_service_handle
+ * @return int	 0 success
+ *				-1 internal error
+ */
+static int data_pool_incoming_handler(sd_event_source *event, int fd, uint32_t revents, void *userdata) {
+	sd_event_source *socket_source = NULL;
+	data_pool_service_handle dp = (data_pool_service_handle)userdata;
+	struct s_data_pool_session *session = NULL;
+	struct s_data_pool_session *listp = NULL;
+	int sessionfd = -1;
+	int ret = -1;
+	
+	if ((revents & (EPOLLHUP | EPOLLERR)) != 0) {
+		// False safe: Disavle server socket
+		if (dp != NULL) {
+			dp->socket_evsource = sd_event_source_disable_unref(dp->socket_evsource);
+		}
+		fprintf(stderr,"Server connection error\n");
+		return -1;
+	}
+	if ((revents & EPOLLIN) != 0) {
+		// New session
+		sessionfd = accept4(fd, NULL, NULL,SOCK_NONBLOCK|SOCK_CLOEXEC);
+		if (sessionfd == -1) {
 			perror("accept");
 			return -1;
-        }
-	}
-	if ((revents & (EPOLLHUP | EPOLLERR)) != 0) {
-		return -1;
+		}
+		
+		if (dp == NULL) {
+			close(sessionfd);
+			return -1;
+		}
+		
+		session = malloc(sizeof(struct s_data_pool_session));
+		if (session == NULL) {
+			close(sessionfd);
+			return -1;
+		}
+		session->next = NULL;
+		
+		ret = sd_event_add_io(	dp->parent_eventloop,
+								&session->socket_evsource, 
+								sessionfd, 
+								(EPOLLIN | EPOLLHUP | EPOLLERR ),
+								data_pool_sessions_handler,
+								dp);
+		if (ret < 0) {
+			free(session);
+			close(sessionfd);
+			return -1;
+		}
+		
+		if (dp->session_list == NULL) {
+			// 1st session
+			dp->session_list = session;
+		} else {
+			listp = dp->session_list;
+			for(int i=0; i < 1000;i++) {
+				if (listp->next == NULL) {
+					listp->next = session;
+					break;
+				}
+			}
+		}
 	}
 	fprintf(stderr,"connect\n");
 
@@ -62,6 +230,7 @@ static int data_pool_incoming_handler(sd_event_source *es, int fd, uint32_t reve
 static uint64_t timerval=0;
 int g_count = 0;
 static int timer_handler(sd_event_source *es, uint64_t usec, void *userdata) {
+	data_pool_service_handle dp = (data_pool_service_handle)userdata;
 	int ret = -1;
 	
 	if ((usec - timerval) > 10) {
@@ -73,31 +242,25 @@ static int timer_handler(sd_event_source *es, uint64_t usec, void *userdata) {
 		return -1;
 	}
 	
+	(void)data_pool_message_passanger(dp);
+	
 	return 0;
 }
-
-
-
-/** data pool service handles */
-struct s_data_pool_service {
-	sd_event_source *socket_evsource;	/**< UNIX Domain socket event source for data pool service */
-	sd_event_source *timer_evsource;	/**< timer event source for data pool service  */
-};
-typedef struct s_data_pool_service *data_pool_service_handle;
 
 /**
  * Sub function for data pool passenger setup
  *
- * @param [in]	event	第一引数の説明
- * @param [out]	errcode	第一引数の説明
- * @return int	-2 argument error
+ * @param [in]	event	TODO
+ * @param [out]	errcode	TODO
+ * @return int	 0 success
+ *				-2 argument error
  *				-1 internal error
  */
 int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle) {
 	sd_event_source *socket_source = NULL;
 	sd_event_source *timer_source = NULL;
 	struct sockaddr_un name;
-	struct s_data_pool_service dp = NULL;
+	struct s_data_pool_service *dp = NULL;
 	int fd = -1;
 	int ret = -1;
 	
@@ -114,6 +277,8 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle) {
 	}
 	
 	memset(dp, 0, sizeof(*dp));
+	
+	dp->parent_eventloop = event;
 	
 	// Create server socket.
 	fd = socket(AF_UNIX, SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK, AF_UNIX);
@@ -139,32 +304,37 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle) {
 		goto err_return;
 	}
 	
-	ret = sd_event_add_io(event, &socket_source, fd, EPOLLIN, data_pool_incoming_handler, NULL);
+	ret = sd_event_add_io(event, &socket_source, fd, EPOLLIN, data_pool_incoming_handler, dp);
 	if (ret < 0){
 		ret = -1;
 		goto err_return;
 	}
-
+	
+	dp->socket_evsource = socket_source;
+	
 	// Notification timer setup
 	ret = sd_event_now(event, CLOCK_MONOTONIC, &timerval);
 	timerval = timerval + 1*1000*1000;
 	ret = sd_event_add_time(event,
-							&timerevent_source,
+							&timer_source,
 							CLOCK_MONOTONIC,
 							timerval, //triger time (usec)
 							1*1000,	//accuracy (1000usec)
  							timer_handler,
-							NULL);
+							dp);
 	if (ret < 0){
 		ret = -1;
 		goto err_return;
 	}
-
-	ret = sd_event_source_set_enabled(timerevent_source,SD_EVENT_ON);
+	dp->timer_evsource = timer_source;
+	
+	ret = sd_event_source_set_enabled(timer_source,SD_EVENT_ON);
 	if (ret < 0){
 		ret = -1;
 		goto err_return;
 	}
+	
+	(*handle) = dp;
 	
 	return 0;
 	
@@ -180,7 +350,8 @@ err_return:
  * Block SIGTERM, when this process receive SIGTERM, event loop will exit.
  *
  * @param [in]	event	第一引数の説明
- * @return int	-2 argument error
+ * @return int	 0 success
+ * 				-2 argument error
  *				-1 internal error
  */
 int signal_setup(sd_event *event) {
@@ -213,13 +384,14 @@ err_return:
 
 int main(int argc, char *argv[]) {
 	sd_event *event = NULL;
+	data_pool_service_handle handle = NULL;
 	int ret = -1;
 	
 	ret = sd_event_default(&event);
 	if (ret < 0)
 		goto finish;
 
-	ret = signal_setup(sd_event *event);
+	ret = signal_setup(event);
 	if (ret < 0)
 		goto finish;
 	
@@ -228,61 +400,17 @@ int main(int argc, char *argv[]) {
 	if (ret < 0)
 		goto finish;
 
-	fd = socket(AF_UNIX, SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK, AF_UNIX);
-	if (fd < 0) {
-		ret = -errno;
-		goto finish;
-	}
-
-	memset(&name, 0, sizeof(name));
-
-	name.sun_family = AF_UNIX;
-	strncpy(name.sun_path, SOCKET_NAME, sizeof(name.sun_path) - 1);
-
-
-	ret = bind(fd, (const struct sockaddr *) &name, sizeof(name));
-	if (ret == -1) {
-		goto finish;
-	}
-
-	ret = listen(fd, 20);
-	if (ret == -1) {
-		goto finish;
-	}
+	ret = data_pool_service_setup(event, &handle);
 	
-	ret = sd_event_add_io(event, &event_source, fd, EPOLLIN, io_handler, NULL);
-	if (ret < 0)
-		goto finish;
-
-	ret = sd_event_now(event, CLOCK_MONOTONIC, &timerval);
-	timerval = timerval + 1*1000*1000;
-	ret = sd_event_add_time(event,
-							&timerevent_source,
-							CLOCK_MONOTONIC,
-							timerval, //triger time (usec)
-							1*1000,	//accuracy (1000usec)
- 							timer_handler,
-							NULL);
-	if (ret < 0)
-		goto finish;
-
-	ret = sd_event_source_set_enabled(timerevent_source,SD_EVENT_ON);
-	if (ret < 0)
-		goto finish;
 	
-	(void)sd_notifyf(false,
+	(void)sd_notify(false,
 					"READY=1\n"
 					"STATUS=Daemon startup completed, processing events.");
 
 	ret = sd_event_loop(event);
 
 finish:
-	timerevent_source = sd_event_source_unref(timerevent_source);
-	event_source = sd_event_source_unref(event_source);
 	event = sd_event_unref(event);
-
-	if (fd >= 0)
-		(void) close(fd);
 
 	if (ret < 0)
 		fprintf(stderr, "Failure: %s\n", strerror(-ret));

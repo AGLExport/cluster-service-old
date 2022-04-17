@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 bin_PROGRAMS = cluster_service ms_client
 
 cluster_service_SOURCES = \
-		ms_server.c 
+		cluster-service.c 
 
 # options
 # Additional library

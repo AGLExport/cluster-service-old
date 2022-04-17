@@ -46,7 +46,7 @@ PKG_CHECK_MODULES([LIBSYSTEMD], [libsystemd])
 
 # Checks for library functions.
 
-AC_CONFIG_FILES([Makefile exsample.pc 
+AC_CONFIG_FILES([Makefile 
 				lib/Makefile
 				src/Makefile ])
 AC_OUTPUT

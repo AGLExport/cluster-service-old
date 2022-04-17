@@ -7,7 +7,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#define SOCKET_NAME "/tmp/9Lq7BNBnBycd6nxy.socket"
+#define SOCKET_NAME "/tmp/cluster-service.socket"
 #define BUFFER_SIZE (1024*64)
 
 int main(int argc, char *argv[]) {
