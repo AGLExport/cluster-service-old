@@ -13,11 +13,11 @@ AC_CONFIG_HEADERS([include/config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 
-AC_ARG_ENABLE([userdebug],
-  [AS_HELP_STRING([--enable-userdebug], [Enable user debuging function (default is no)])],
+AC_ARG_ENABLE([address-sanitizer],
+  [AS_HELP_STRING([--enable-address-sanitizer], [Enable address sanitizer in build time (for debug, default is no)])],
   [:],
-  [enable_userdebug=no])
-AM_CONDITIONAL([ENABLE_USERDEBUG], [test "$enable_userdebug" = "yes"])
+  [enable_address_sanitizer])
+AM_CONDITIONAL([ENABLE_ADDRESS_SANITIZER], [test "$enable_address_sanitizer" = "yes"])
 
 AC_ARG_ENABLE([printfdebug],
   [AS_HELP_STRING([--enable-printfdebug], [Enable user printf debug (default is no)])],

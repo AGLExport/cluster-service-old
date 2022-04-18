@@ -17,7 +17,7 @@
 
 #ifndef	AGLCLUSTER_SERVICE_PROTOCOL_H
 #define	AGLCLUSTER_SERVICE_PROTOCOL_H
-
+//-----------------------------------------------------------------------------//-----------------------------------------------------------------------------
 #include <stdint.h>
 
 struct __attribute__((packed)) S_AGLCLUSTER_SERVICE_PACKETHEADER_V1 {
@@ -105,13 +105,13 @@ struct __attribute__((packed)) S_AGLCLUSTER_SERVICE_DATA_V1 {
 	uint8_t  minuteBVal;
 	uint8_t  secondAVal;
 	uint8_t  secondBVal;
-	int16_t  oTempVal;
-	int32_t  oTempUnitVal;
 	uint16_t cruRangeVal;
 	uint16_t avgFuelAVal;
 	uint16_t avgFuelBVal;
 	uint16_t insFuelAVal;
 	uint16_t insFuelBVal;
+	int16_t  oTempVal;
+	int32_t  oTempUnitVal;
 	int32_t  fuelEconomyUnitVal;
 };
 
@@ -123,4 +123,5 @@ struct __attribute__((packed)) S_AGLCLUSTER_SERVICE_PACKET_V1 {
 typedef struct S_AGLCLUSTER_SERVICE_PACKET_V1 AGLCLUSTER_SERVICE_PACKET_V1;
 typedef struct S_AGLCLUSTER_SERVICE_PACKET_V1 AGLCLUSTER_SERVICE_PACKET;
 
+//-----------------------------------------------------------------------------
 #endif //AGLCLUSTER_SERVICE_PROTOCOL_H
