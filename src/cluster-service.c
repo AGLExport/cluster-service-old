@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 	ret = sd_event_loop(event);
 
 finish:
-	data_pool_service_cleanup(handle);
+	(void)data_pool_service_cleanup(handle);
 	event = sd_event_unref(event);
 
 
