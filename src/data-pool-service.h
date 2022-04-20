@@ -14,18 +14,13 @@
 struct s_data_pool_service;
 typedef struct s_data_pool_service *data_pool_service_handle;
 
-
 /** data pool service static configurator. It shall be set statically bosth service and client library.*/
-struct s_data_pool_service_configure
-{
-	uint64_t notification_interval;	/**< data pool notification interval */
-	
-	
-	char socket_name[92];			/**< data pool socket name */
+struct s_data_pool_service_configure {
+	uint64_t notification_interval; /**< data pool notification interval */
 
+	char socket_name[92]; /**< data pool socket name */
 };
 typedef struct s_data_pool_service_configure data_pool_service_staticconfig;
-
 
 int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle);
 int data_pool_service_cleanup(data_pool_service_handle handle);
