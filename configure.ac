@@ -27,6 +27,7 @@ AM_CONDITIONAL([ENABLE_PRINTFDEBUG], [test "$enable_printfdebug" = "yes"])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 
 AC_DISABLE_STATIC
@@ -37,6 +38,8 @@ AM_PROG_LIBTOOL
 
 PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES([LIBSYSTEMD], [libsystemd])
+PKG_CHECK_MODULES([GTEST_MAIN], [gtest_main])
+PKG_CHECK_MODULES([GMOCK_MAIN], [gmock_main])
 
 
 
@@ -48,6 +51,7 @@ PKG_CHECK_MODULES([LIBSYSTEMD], [libsystemd])
 
 AC_CONFIG_FILES([Makefile 
 				lib/Makefile
-				src/Makefile ])
+				src/Makefile
+				test/Makefile ])
 AC_OUTPUT
 

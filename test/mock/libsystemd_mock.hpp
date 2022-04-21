@@ -1,0 +1,165 @@
+#include <gmock/gmock.h>
+#include <functional>
+
+#include <systemd/sd-event.h>
+
+
+/*
+int sd_event_add_signal(	sd_event *event,
+ 	sd_event_source **source,
+ 	int signal,
+ 	sd_event_signal_handler_t handler,
+ 	void *userdata);
+*/
+static std::function<int(sd_event *event,
+ 	sd_event_source **source,
+ 	int signal,
+ 	sd_event_signal_handler_t handler,
+ 	void *userdata)> _sd_event_add_signal;
+/*
+static std::function<ssize_t(int, const void*, size_t, off_t)> _pwrite;
+static std::function<ssize_t(int, const struct iovec*, int, off_t)> _preadv;
+static std::function<ssize_t(int, const struct iovec*, int, off_t)> _pwritev;
+static std::function<int(int)> _fsync;
+static std::function<int(int)> _close;
+static std::function<int(const char*)> _unlink;
+static std::function<int(const char*, int)> _open;
+static std::function<int(int, off_t)> _ftruncate;
+static std::function<int(int, struct stat*)> _fstat;
+*/
+class LibsystemdMocker {
+public:
+    LibsystemdMocker() {
+        _sd_event_add_signal 
+    		= [this](sd_event *event,
+ 						sd_event_source **source,
+ 						int signal,
+ 						sd_event_signal_handler_t handler,
+ 						void *userdata)
+		{
+			return sd_event_add_signal(event, source, signal, handler, userdata);
+		};
+/*
+        _pwrite = [this](int fd, const void *buffer, size_t count, off_t offset){
+            return pwrite(fd, buffer, count, offset);
+        };
+
+        _preadv = [this](int fd, const struct iovec *iov, int iovcnt, off_t offset){
+            return preadv(fd, iov, iovcnt, offset);
+        };
+
+        _pwritev = [this](int fd, const iovec *iov, int iovcnt, off_t offset){
+            return pwritev(fd, iov, iovcnt, offset);
+        };
+
+        _fsync = [this](int fd){
+            return fsync(fd);
+        };
+
+        _close = [this](int fd){
+            return close(fd);
+        };
+
+        _unlink = [this](const char *pathname){
+            return unlink(pathname);
+        };
+
+        _open = [this](const char *pathname, int flags){
+            return open(pathname, flags);
+        };
+
+        _ftruncate = [this](int fd, off_t length){
+            return ftruncate(fd, length);
+        };
+
+        _fstat = [this](int fd, struct stat *buf){
+            return fstat(fd, buf);
+        };
+*/
+    }
+
+    ~LibsystemdMocker() {
+        _sd_event_add_signal = {};
+/*
+    	_pwrite = {};
+        _preadv = {};
+        _pwritev = {};
+        _fsync = {};
+        _close = {};
+        _unlink = {};
+        _open = {};
+        _ftruncate = {};
+        _fstat = {};
+*/
+    }
+
+    MOCK_CONST_METHOD5(sd_event_add_signal, int(sd_event *event, sd_event_source **source, int signal, sd_event_signal_handler_t handler, void *userdata));
+/*    MOCK_CONST_METHOD4(pwrite, ssize_t(int, const void*, size_t, off_t));
+    MOCK_CONST_METHOD4(preadv, ssize_t(int, const struct iovec*, int, off_t));
+    MOCK_CONST_METHOD4(pwritev, ssize_t(int, const iovec*, int, off_t));
+    MOCK_CONST_METHOD1(fsync, int(int));
+    MOCK_CONST_METHOD1(close, int(int));
+    MOCK_CONST_METHOD1(unlink, int(const char*));
+    MOCK_CONST_METHOD2(open, int(const char*, int));
+    MOCK_CONST_METHOD2(ftruncate, int(int, off_t));
+    MOCK_CONST_METHOD2(fstat, int(int, struct stat*));
+*/
+};
+
+class LibsystemdMockBase {
+protected:
+   LibsystemdMocker lsm;
+};
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int sd_event_add_signal(	sd_event *event,
+ 	sd_event_source **source,
+ 	int signal,
+ 	sd_event_signal_handler_t handler,
+ 	void *userdata)
+{
+    return _sd_event_add_signal(event, source, signal, handler, userdata);
+}
+/*
+ssize_t pwrite(int fd, const void *buffer, size_t count, off_t offset) {
+    return _pwrite(fd, buffer, count, offset);
+}
+
+ssize_t preadv(int fd, const struct iovec *iov, int iovcnt, off_t offset) {
+    return _preadv(fd, iov, iovcnt, offset);
+}
+
+ssize_t pwritev(int fd, const iovec *iov, int iovcnt, off_t offset) {
+    return _pwritev(fd, iov, iovcnt, offset);
+}
+
+int fsync(int fd) {
+    return _fsync(fd);
+}
+
+int close(int fd) {
+    return _close(fd);
+}
+
+int unlink(const char *pathname) {
+    return _unlink(pathname);
+}
+
+int open(const char *pathname, int flags) {
+    return _open(pathname, flags);
+}
+
+int ftruncate(int fd, off_t length) {
+    return _ftruncate(fd, length);
+}
+
+int fstat(int fd, struct stat *buf) {
+    return _fstat(fd, buf);
+}
+*/
+#ifdef __cplusplus
+}
+#endif

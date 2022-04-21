@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SPDX-License-Identifier: Apache-2.0
  *
  * @file	data-pool-service.c
@@ -194,7 +194,8 @@ static int data_pool_incoming_handler(sd_event_source *event, int fd,
 			return -1;
 		}
 
-		session = malloc(sizeof(struct s_data_pool_session));
+		session = 
+			(struct s_data_pool_session*)malloc(sizeof(struct s_data_pool_session));
 		if (session == NULL) {
 			close(sessionfd);
 			return -1;
@@ -287,7 +288,7 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	// unlink existing sicket file.
 	unlink(SOCKET_NAME);
 
-	dp = malloc(sizeof(struct s_data_pool_service));
+	dp = (struct s_data_pool_service *)malloc(sizeof(struct s_data_pool_service));
 	if (dp == NULL) {
 		ret = -1;
 		goto err_return;
