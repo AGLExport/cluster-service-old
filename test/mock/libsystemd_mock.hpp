@@ -5,105 +5,90 @@
 
 
 /*
-int sd_event_add_signal(	sd_event *event,
- 	sd_event_source **source,
- 	int signal,
- 	sd_event_signal_handler_t handler,
- 	void *userdata);
+int sd_event_add_signal(sd_event *event, sd_event_source **source,
+			int signal, sd_event_signal_handler_t handler, void *userdata);
 */
-static std::function<int(sd_event *event,
- 	sd_event_source **source,
- 	int signal,
- 	sd_event_signal_handler_t handler,
- 	void *userdata)> _sd_event_add_signal;
+static std::function<int(sd_event *event, sd_event_source **source,
+			int signal, sd_event_signal_handler_t handler, void *userdata)> _sd_event_add_signal;
+
 /*
-static std::function<ssize_t(int, const void*, size_t, off_t)> _pwrite;
-static std::function<ssize_t(int, const struct iovec*, int, off_t)> _preadv;
-static std::function<ssize_t(int, const struct iovec*, int, off_t)> _pwritev;
-static std::function<int(int)> _fsync;
-static std::function<int(int)> _close;
-static std::function<int(const char*)> _unlink;
-static std::function<int(const char*, int)> _open;
-static std::function<int(int, off_t)> _ftruncate;
-static std::function<int(int, struct stat*)> _fstat;
+int sd_event_add_io(sd_event *event, sd_event_source **source, int fd,
+			uint32_t events, sd_event_io_handler_t handler, void *userdata);
+int sd_event_source_get_io_fd(sd_event_source *source);
+int sd_event_source_set_io_fd_own(sd_event_source *source, int b);
 */
+static std::function<int(sd_event *event, sd_event_source **source, int fd,
+			uint32_t events, sd_event_io_handler_t handler, void *userdata)>
+			_sd_event_add_io;
+static std::function<int(sd_event_source *source)> _sd_event_source_get_io_fd;
+static std::function<int(sd_event_source *source, int b)> _sd_event_source_set_io_fd_own;
+
+/*
+sd_event_source* sd_event_source_unref(sd_event_source *source);
+sd_event_source* sd_event_source_ref(sd_event_source *source);
+sd_event_source* sd_event_source_disable_unref(sd_event_source *source);
+*/
+static std::function<sd_event_source*(sd_event_source *source)> _sd_event_source_unref;
+static std::function<sd_event_source*(sd_event_source *source)> _sd_event_source_ref;
+static std::function<sd_event_source*(sd_event_source *source)> _sd_event_source_disable_unref;
+
+
 class LibsystemdMocker {
 public:
-    LibsystemdMocker() {
-        _sd_event_add_signal 
-    		= [this](sd_event *event,
- 						sd_event_source **source,
- 						int signal,
- 						sd_event_signal_handler_t handler,
- 						void *userdata)
-		{
+	LibsystemdMocker() {
+		_sd_event_add_signal 
+			= [this](sd_event *event,
+						sd_event_source **source,
+						int signal,
+						sd_event_signal_handler_t handler,
+						void *userdata) {
 			return sd_event_add_signal(event, source, signal, handler, userdata);
 		};
-/*
-        _pwrite = [this](int fd, const void *buffer, size_t count, off_t offset){
-            return pwrite(fd, buffer, count, offset);
-        };
 
-        _preadv = [this](int fd, const struct iovec *iov, int iovcnt, off_t offset){
-            return preadv(fd, iov, iovcnt, offset);
-        };
+		_sd_event_add_io
+			= [this](sd_event *event, sd_event_source **source, int fd,
+						uint32_t events, sd_event_io_handler_t handler, void *userdata) {
+			return sd_event_add_io(event, source, fd, events, handler, userdata);
+		};
 
-        _pwritev = [this](int fd, const iovec *iov, int iovcnt, off_t offset){
-            return pwritev(fd, iov, iovcnt, offset);
-        };
+		_sd_event_source_get_io_fd = [this](sd_event_source *source) {
+			return sd_event_source_get_io_fd(source);
+		};
 
-        _fsync = [this](int fd){
-            return fsync(fd);
-        };
+		_sd_event_source_set_io_fd_own = [this](sd_event_source *source, int b) {
+			return sd_event_source_set_io_fd_own(source, b);
+		};
+		
+		_sd_event_source_unref = [this](sd_event_source *source) {
+			return sd_event_source_unref(source);
+		};
 
-        _close = [this](int fd){
-            return close(fd);
-        };
+		_sd_event_source_ref = [this](sd_event_source *source) {
+			return sd_event_source_ref(source);
+		};
 
-        _unlink = [this](const char *pathname){
-            return unlink(pathname);
-        };
+		_sd_event_source_disable_unref = [this](sd_event_source *source) {
+			return sd_event_source_disable_unref(source);
+		};
+	}
 
-        _open = [this](const char *pathname, int flags){
-            return open(pathname, flags);
-        };
+	~LibsystemdMocker() {
+		_sd_event_add_signal = {};
+		_sd_event_add_io = {};
+		_sd_event_source_get_io_fd = {};
+		_sd_event_source_set_io_fd_own = {};
+		_sd_event_source_unref = {};
+		_sd_event_source_ref = {};
+		_sd_event_source_disable_unref = {};
+	}
 
-        _ftruncate = [this](int fd, off_t length){
-            return ftruncate(fd, length);
-        };
-
-        _fstat = [this](int fd, struct stat *buf){
-            return fstat(fd, buf);
-        };
-*/
-    }
-
-    ~LibsystemdMocker() {
-        _sd_event_add_signal = {};
-/*
-    	_pwrite = {};
-        _preadv = {};
-        _pwritev = {};
-        _fsync = {};
-        _close = {};
-        _unlink = {};
-        _open = {};
-        _ftruncate = {};
-        _fstat = {};
-*/
-    }
-
-    MOCK_CONST_METHOD5(sd_event_add_signal, int(sd_event *event, sd_event_source **source, int signal, sd_event_signal_handler_t handler, void *userdata));
-/*    MOCK_CONST_METHOD4(pwrite, ssize_t(int, const void*, size_t, off_t));
-    MOCK_CONST_METHOD4(preadv, ssize_t(int, const struct iovec*, int, off_t));
-    MOCK_CONST_METHOD4(pwritev, ssize_t(int, const iovec*, int, off_t));
-    MOCK_CONST_METHOD1(fsync, int(int));
-    MOCK_CONST_METHOD1(close, int(int));
-    MOCK_CONST_METHOD1(unlink, int(const char*));
-    MOCK_CONST_METHOD2(open, int(const char*, int));
-    MOCK_CONST_METHOD2(ftruncate, int(int, off_t));
-    MOCK_CONST_METHOD2(fstat, int(int, struct stat*));
-*/
+	MOCK_CONST_METHOD5(sd_event_add_signal, int(sd_event *event, sd_event_source **source, int signal, sd_event_signal_handler_t handler, void *userdata));
+	MOCK_CONST_METHOD6(sd_event_add_io, int(sd_event *event, sd_event_source **source, int fd, uint32_t events, sd_event_io_handler_t handler, void *userdata));
+	MOCK_CONST_METHOD1(sd_event_source_get_io_fd, int(sd_event_source *source));
+	MOCK_CONST_METHOD2(sd_event_source_set_io_fd_own, int(sd_event_source *source, int b));
+	MOCK_CONST_METHOD1(sd_event_source_unref, sd_event_source*(sd_event_source *source));
+	MOCK_CONST_METHOD1(sd_event_source_ref, sd_event_source*(sd_event_source *source));
+	MOCK_CONST_METHOD1(sd_event_source_disable_unref, sd_event_source*(sd_event_source *source));
 };
 
 class LibsystemdMockBase {
@@ -123,43 +108,38 @@ int sd_event_add_signal(	sd_event *event,
 {
     return _sd_event_add_signal(event, source, signal, handler, userdata);
 }
-/*
-ssize_t pwrite(int fd, const void *buffer, size_t count, off_t offset) {
-    return _pwrite(fd, buffer, count, offset);
+
+int sd_event_add_io(sd_event *event, sd_event_source **source, int fd,
+			uint32_t events, sd_event_io_handler_t handler, void *userdata)
+{
+	return _sd_event_add_io(event, source, fd, events, handler, userdata);
 }
 
-ssize_t preadv(int fd, const struct iovec *iov, int iovcnt, off_t offset) {
-    return _preadv(fd, iov, iovcnt, offset);
+int sd_event_source_get_io_fd(	sd_event_source *source)
+{
+	return _sd_event_source_get_io_fd(source);
 }
 
-ssize_t pwritev(int fd, const iovec *iov, int iovcnt, off_t offset) {
-    return _pwritev(fd, iov, iovcnt, offset);
+int sd_event_source_set_io_fd_own(sd_event_source *source, int b)
+{
+	return _sd_event_source_set_io_fd_own(source, b);
+}
+	
+sd_event_source* sd_event_source_unref(sd_event_source *source)
+{
+	return _sd_event_source_unref(source);
 }
 
-int fsync(int fd) {
-    return _fsync(fd);
+sd_event_source* sd_event_source_ref(sd_event_source *source)
+{
+	return _sd_event_source_ref(source);
 }
 
-int close(int fd) {
-    return _close(fd);
+sd_event_source* sd_event_source_disable_unref(sd_event_source *source)
+{
+	return _sd_event_source_disable_unref(source);
 }
 
-int unlink(const char *pathname) {
-    return _unlink(pathname);
-}
-
-int open(const char *pathname, int flags) {
-    return _open(pathname, flags);
-}
-
-int ftruncate(int fd, off_t length) {
-    return _ftruncate(fd, length);
-}
-
-int fstat(int fd, struct stat *buf) {
-    return _fstat(fd, buf);
-}
-*/
 #ifdef __cplusplus
 }
 #endif

@@ -48,7 +48,7 @@ AGLCLUSTER_SERVICE_PACKET packet;
  * Data pool message passenger
  *
  * @param [in]	dp			data pool service handle
- * @return int	 0 success
+* @return int	 >0 success (num of passanged sessions)
  *				-1 internal error
  *				-2 argument error
  */
@@ -56,12 +56,15 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 {
 	struct s_data_pool_session *listp = NULL;
 	int fd = -1;
-	int ret = -1;
+	ssize_t ret = -1;
+	int result = -1;
 
 	packet.header.seqnum++;
 
 	if (dp == NULL)
 		return -2;
+
+	result = 0;
 
 	if (dp->session_list != NULL) {
 		listp = dp->session_list;
@@ -75,6 +78,7 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 				// When socket buffer is full (EAGAIN), this write is pass..
 				// When socket return other error, it will handle in socket fd event handler.
 			}
+			result = result + 1;
 
 			if (listp->next != NULL) {
 				listp = listp->next;
@@ -82,9 +86,11 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 				break;
 			}
 		}
+		//Force loop out 
+		result = -1;
 	}
 
-	return 0;
+	return result;
 }
 
 /**
@@ -110,7 +116,7 @@ static int data_pool_sessions_handler(sd_event_source *event, int fd,
 	if ((revents & (EPOLLHUP | EPOLLERR)) != 0) {
 		// Disconnect session
 
-		if (dp->session_list != NULL) {
+		if ((dp != NULL) && (dp->session_list != NULL)) {
 			listp = dp->session_list;
 			for (int i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT;
 			     i++) {
@@ -124,30 +130,28 @@ static int data_pool_sessions_handler(sd_event_source *event, int fd,
 						sd_event_source_disable_unref(
 							listp->socket_evsource);
 					free(listp);
-					break;
+					goto success_return;
 				}
 				privp = listp;
 				listp = listp->next;
 
 				if (listp == NULL) {
-					// End of list, Tihs event is not include session list. Faile safe it unref.
-					sd_event_source_disable_unref(event);
 					break;
 				}
 			}
-		} else {
-			// No list, Tihs event is not include session list. Faile safe it unref.
-			sd_event_source_disable_unref(event);
 		}
-		fprintf(stderr, "Client disconnect\n");
-		return -1;
-	}
-	if ((revents & EPOLLIN) != 0) {
+		// Arg error or end of list or loop limit,
+		// Tihs event is not include session list. Faile safe it unref.
+		sd_event_source_disable_unref(event);
+	} else if ((revents & EPOLLIN) != 0) {
 		// Receive
 
 		//TODO
 	}
 
+	return -1;
+
+success_return :
 	return 0;
 }
 
@@ -164,7 +168,6 @@ static int data_pool_sessions_handler(sd_event_source *event, int fd,
 static int data_pool_incoming_handler(sd_event_source *event, int fd,
 				      uint32_t revents, void *userdata)
 {
-	//sd_event_source *socket_source = NULL;
 	data_pool_service_handle dp = (data_pool_service_handle)userdata;
 	struct s_data_pool_session *session = NULL;
 	struct s_data_pool_session *listp = NULL;
@@ -177,57 +180,54 @@ static int data_pool_incoming_handler(sd_event_source *event, int fd,
 			dp->socket_evsource = sd_event_source_disable_unref(
 				dp->socket_evsource);
 		}
-		fprintf(stderr, "Server connection error\n");
-		return -1;
-	}
-	if ((revents & EPOLLIN) != 0) {
+		
+		goto error_return;
+		
+	} else if ((revents & EPOLLIN) != 0) {
 		// New session
-		sessionfd =
-			accept4(fd, NULL, NULL, SOCK_NONBLOCK | SOCK_CLOEXEC);
-		if (sessionfd == -1) {
-			perror("accept");
-			return -1;
-		}
+		do {
+			sessionfd =
+				accept4(fd, NULL, NULL, SOCK_NONBLOCK | SOCK_CLOEXEC);
+		} while ((sessionfd < 0) && (errno == EINTR));
 
-		if (dp == NULL) {
-			close(sessionfd);
-			return -1;
-		}
+		if (sessionfd < 0)
+			goto error_return;
+
+		if (dp == NULL)
+			goto error_return;
 
 		session = 
 			(struct s_data_pool_session*)malloc(sizeof(struct s_data_pool_session));
-		if (session == NULL) {
-			close(sessionfd);
-			return -1;
-		}
+		if (session == NULL)
+			goto error_return;
+
+		memset(session, 0 , sizeof(*session));
 		session->next = NULL;
 
 		ret = sd_event_add_io(dp->parent_eventloop,
 				      &session->socket_evsource, sessionfd,
 				      (EPOLLIN | EPOLLHUP | EPOLLERR),
 				      data_pool_sessions_handler, dp);
-		if (ret < 0) {
-			free(session);
-			close(sessionfd);
-			return -1;
-		}
+		if (ret < 0)
+			goto error_return;
 
 		// Set automatically fd close at delete object.
 		ret = sd_event_source_set_io_fd_own(session->socket_evsource,
 						    1);
 		if (ret < 0) {
 			sd_event_source_disable_unref(session->socket_evsource);
-			free(session);
-			close(sessionfd);
-			return -1;
+			goto error_return;
 		}
+		// After this, shall not clode sessionfd by close.
+		sessionfd = -1;
 
 		if (dp->session_list == NULL) {
 			// 1st session
 			dp->session_list = session;
 		} else {
+			int i = 0;
 			listp = dp->session_list;
-			for (int i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT;
+			for (i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT;
 			     i++) {
 				if (listp->next == NULL) {
 					listp->next = session;
@@ -235,13 +235,28 @@ static int data_pool_incoming_handler(sd_event_source *event, int fd,
 				}
 				listp = listp->next;
 			}
+			if (i >= DATA_POOL_SERVICE_SESSION_LIMIT)
+				goto error_return;
 		}
 	}
-	fprintf(stderr, "connect\n");
+	else
+		goto error_return;
 
 	return 0;
+	
+error_return :
+	if (sessionfd >= 0)
+		close(sessionfd);
+	
+	if ((session != NULL) && (session->socket_evsource != NULL))
+		(void*)sd_event_source_disable_unref(session->socket_evsource);
+
+	free(session);	// NULL through
+
+	return -1;
 }
 
+#ifndef UNIT_TEST
 static uint64_t timerval = 0;
 int g_count = 0;
 static int timer_handler(sd_event_source *es, uint64_t usec, void *userdata)
@@ -375,6 +390,7 @@ err_return:
 
 	return ret;
 }
+#endif
 
 /**
  * Function for data pool passenger cleanup

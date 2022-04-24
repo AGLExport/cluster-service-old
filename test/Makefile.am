@@ -1,11 +1,13 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
-bin_PROGRAMS = cluster_service_util_test 
-#data_pool_service_test
+bin_PROGRAMS = cluster_service_util_test data_pool_service_test
 
 cluster_service_util_test_SOURCES = \
 		cluster-service-util-test.cpp 
+
+data_pool_service_test_SOURCES = \
+		data-pool-service-test.cpp 
 
 # options
 # Additional library
@@ -39,3 +41,4 @@ CXXFLAGS = \
 LDFLAGS = 
 
 
+CLEANFILES = *.gcda *.gcno
