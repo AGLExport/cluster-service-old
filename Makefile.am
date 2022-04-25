@@ -1,5 +1,5 @@
 #SUBDIRS = lib src
-SUBDIRS = src test
+SUBDIRS = src example test
 
 #pkgconfigdir = $(libdir)/pkgconfig
 #pkgconfig_DATA = exsample.pc
