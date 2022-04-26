@@ -98,3 +98,17 @@ Makefile
 *.su
 *.idb
 *.pdb
+
+# covarage 
+coverage/*
+*.gcda
+*.gcno
+
+# execute files
+cluster_service
+cluster_client
+
+# test
+cluster_service_util_test
+data_pool_service_test
+
