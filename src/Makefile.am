@@ -5,18 +5,19 @@ bin_PROGRAMS = cluster_service ms_client
 
 cluster_service_SOURCES = \
 		data-pool-service.c \
-		cluster-service-util.c \
 		cluster-service.c 
 
 # options
 # Additional library
 cluster_service_LDADD = \
+		$(top_srcdir)/lib/libcluster_service_common.a \
 		-lrt -lpthread \
 		@LIBSYSTEMD_LIBS@ 
 		
 # C compiler options
 cluster_service_CFLAGS = \
 		-g \
+		-I$(top_srcdir)/lib \
 		-I$(top_srcdir)/include \
 		@LIBSYSTEMD_CFLAGS@ \
 		-D_GNU_SOURCE

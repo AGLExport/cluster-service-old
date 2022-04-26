@@ -10,7 +10,7 @@
 
 // Test Terget files ---------------------------------------
 extern "C" {
-#include "../src/cluster-service-util.c"
+#include "../lib/cluster-service-util.c"
 
 
 }
