@@ -124,4 +124,4 @@ typedef struct S_AGLCLUSTER_SERVICE_PACKET_V1 AGLCLUSTER_SERVICE_PACKET_V1;
 typedef struct S_AGLCLUSTER_SERVICE_PACKET_V1 AGLCLUSTER_SERVICE_PACKET;
 
 //-----------------------------------------------------------------------------
-#endif //AGLCLUSTER_SERVICE_PROTOCOL_H
+#endif // AGLCLUSTER_SERVICE_PROTOCOL_H

@@ -5,8 +5,8 @@
  * @brief	main source file for cluster-service
  */
 
-#include "data-pool-service.h"
 #include "cluster-service-util.h"
+#include "data-pool-service.h"
 
 #include <stdlib.h>
 #include <systemd/sd-daemon.h>
@@ -35,13 +35,14 @@ int main(int argc, char *argv[])
 
 	ret = data_pool_service_setup(event, &handle);
 
-	(void)sd_notify(1,
-			"READY=1\n"
-			"STATUS=Daemon startup completed, processing events.");
+	(void) sd_notify(
+		1,
+		"READY=1\n"
+		"STATUS=Daemon startup completed, processing events.");
 	ret = sd_event_loop(event);
 
 finish:
-	(void)data_pool_service_cleanup(handle);
+	(void) data_pool_service_cleanup(handle);
 	event = sd_event_unref(event);
 
 	return ret < 0 ? EXIT_FAILURE : EXIT_SUCCESS;

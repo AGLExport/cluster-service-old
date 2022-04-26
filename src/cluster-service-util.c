@@ -29,8 +29,8 @@ int signal_setup(sd_event *event)
 		return -2;
 
 	// If the correct arguments are given, these function will never fail.
-	(void)sigemptyset(&ss);
-	(void)sigaddset(&ss, SIGTERM);
+	(void) sigemptyset(&ss);
+	(void) sigaddset(&ss, SIGTERM);
 
 	// Block SIGTERM
 	ret = pthread_sigmask(SIG_BLOCK, &ss, NULL);
