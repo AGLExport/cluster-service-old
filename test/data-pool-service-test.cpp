@@ -795,10 +795,10 @@ TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_lo
 	dp->session_list = dps;
 
 	EXPECT_CALL(lsm, sd_event_source_get_io_fd((sd_event_source *)(0x8a8a)))
-				.Times(DATA_POOL_SERVICE_SESSION_LIMIT)
+				.Times(get_data_pool_service_session_limit())
 				.WillRepeatedly(Return(0xa8a8));
 	EXPECT_CALL(sysiom, write(0xa8a8, _, _))
-				.Times(DATA_POOL_SERVICE_SESSION_LIMIT)
+				.Times(get_data_pool_service_session_limit())
 				.WillRepeatedly(Return(256));
 
 	ret = data_pool_message_passanger(dp);

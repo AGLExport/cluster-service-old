@@ -17,6 +17,7 @@ cluster_client_LDADD = \
 # C compiler options
 cluster_client_CFLAGS = \
 		-g \
+		-I$(top_srcdir)/lib \
 		-I$(top_srcdir)/include \
 		@LIBSYSTEMD_CFLAGS@ \
 		-D_GNU_SOURCE

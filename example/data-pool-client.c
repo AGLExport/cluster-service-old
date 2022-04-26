@@ -5,6 +5,7 @@
  * @brief	data service provider
  */
 
+#include "data-pool-static-configurator.h"
 #include "ipc_protocol.h"
 #include "data-pool-client.h"
 
@@ -17,11 +18,6 @@
 #include <sys/un.h>
 
 #include <stdio.h>
-
-#define SOCKET_NAME "/tmp/cluster-service.socket"
-
-// Internal limitation for datapool service sessions. It use link list search limit.
-#define DATA_POOL_SERVICE_SESSION_LIMIT (1000)
 
 /** data pool service session list */
 struct s_data_pool_session {
@@ -143,6 +139,7 @@ int data_pool_client_setup(sd_event *event, data_pool_client_handle *handle)
 	sd_event_source *socket_source = NULL;
 	struct sockaddr_un name;
 	struct s_data_pool_client *dp = NULL;
+	int sasize = -1;
 	int fd = -1;
 	int ret = -1;
 
@@ -170,7 +167,7 @@ int data_pool_client_setup(sd_event *event, data_pool_client_handle *handle)
 	memset(&name, 0, sizeof(name));
 
 	name.sun_family = AF_UNIX;
-	strncpy(name.sun_path, SOCKET_NAME, sizeof(name.sun_path) - 1);
+	sasize = get_data_pool_service_socket_name(name.sun_path,sizeof(name.sun_path));
 
 	ret = connect(fd, (const struct sockaddr *)&name, sizeof(name));
 	if (ret < 0) {

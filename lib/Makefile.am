@@ -4,7 +4,8 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 noinst_LIBRARIES = libcluster_service_common.a
 
 libcluster_service_common_a_SOURCES = \
-		cluster-service-util.c
+		cluster-service-util.c \
+		data-pool-static-configurator.c
 
 libcluster_service_common_a_CFLAGS = \
 		-g \

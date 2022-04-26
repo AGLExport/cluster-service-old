@@ -5,6 +5,7 @@
  * @brief	data service provider
  */
 
+#include "data-pool-static-configurator.h"
 #include "data-pool-service.h"
 #include "ipc_protocol.h"
 
@@ -17,11 +18,6 @@
 #include <sys/un.h>
 
 #include <stdio.h>
-
-#define SOCKET_NAME "/tmp/cluster-service.socket"
-
-// Internal limitation for datapool service sessions. It use link list search limit.
-#define DATA_POOL_SERVICE_SESSION_LIMIT (1000)
 
 /** data pool service session list */
 struct s_data_pool_session {
@@ -65,7 +61,7 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 	if (dp->session_list != NULL) {
 		listp = dp->session_list;
 
-		for (int i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT; i++) {
+		for (int i = 0; i < get_data_pool_service_session_limit(); i++) {
 			fd = sd_event_source_get_io_fd(listp->socket_evsource);
 			ret = write(fd, &packet, sizeof(packet));
 			if (ret < 0) {
@@ -113,7 +109,7 @@ static int data_pool_sessions_handler(sd_event_source *event, int fd, uint32_t r
 
 		if ((dp != NULL) && (dp->session_list != NULL)) {
 			listp = dp->session_list;
-			for (int i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT; i++) {
+			for (int i = 0; i < get_data_pool_service_session_limit(); i++) {
 				if (listp->socket_evsource == event) {
 					if (privp == NULL) {
 						dp->session_list = listp->next;
@@ -218,14 +214,14 @@ static int data_pool_incoming_handler(sd_event_source *event, int fd, uint32_t r
 		} else {
 			int i = 0;
 			listp = dp->session_list;
-			for (i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT; i++) {
+			for (i = 0; i < get_data_pool_service_session_limit(); i++) {
 				if (listp->next == NULL) {
 					listp->next = session;
 					break;
 				}
 				listp = listp->next;
 			}
-			if (i >= DATA_POOL_SERVICE_SESSION_LIMIT)
+			if (i >= get_data_pool_service_session_limit())
 				goto error_return;
 		}
 	} else
@@ -282,6 +278,7 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	sd_event_source *timer_source = NULL;
 	struct sockaddr_un name;
 	struct s_data_pool_service *dp = NULL;
+	int sasize = -1;
 	int fd = -1;
 	int ret = -1;
 
@@ -289,7 +286,13 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 		return -2;
 
 	// unlink existing sicket file.
-	unlink(SOCKET_NAME);
+	if (get_data_pool_service_socket_name_type() == 0) {
+		// If sock name type equal socket file, it remove.
+		char filename[128];
+		memset(filename,0,sizeof(filename));
+		(void)get_data_pool_service_socket_name(filename, sizeof(filename));
+		(void)unlink(filename);
+	}
 
 	dp = (struct s_data_pool_service *) malloc(sizeof(struct s_data_pool_service));
 	if (dp == NULL) {
@@ -311,9 +314,9 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	memset(&name, 0, sizeof(name));
 
 	name.sun_family = AF_UNIX;
-	strncpy(name.sun_path, SOCKET_NAME, sizeof(name.sun_path) - 1);
+	sasize = get_data_pool_service_socket_name(name.sun_path,sizeof(name.sun_path));
 
-	ret = bind(fd, (const struct sockaddr *) &name, sizeof(name));
+	ret = bind(fd, (const struct sockaddr *) &name, sasize + sizeof(sa_family_t));
 	if (ret < 0) {
 		ret = -1;
 		goto err_return;
@@ -400,7 +403,7 @@ int data_pool_service_cleanup(data_pool_service_handle handle)
 
 	if (dp->session_list != NULL) {
 		listp = dp->session_list;
-		for (int i = 0; i < DATA_POOL_SERVICE_SESSION_LIMIT; i++) {
+		for (int i = 0; i < get_data_pool_service_session_limit(); i++) {
 			listp->socket_evsource = sd_event_source_disable_unref(listp->socket_evsource);
 			listp_free = listp;
 			listp = listp->next;

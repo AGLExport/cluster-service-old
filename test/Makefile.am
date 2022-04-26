@@ -12,6 +12,7 @@ data_pool_service_test_SOURCES = \
 # options
 # Additional library
 LDADD = \
+		$(top_srcdir)/lib/libcluster_service_common.a \
 		-lrt -lpthread \
 		@GTEST_MAIN_LIBS@ \
 		@GMOCK_MAIN_LIBS@ 
@@ -20,6 +21,7 @@ LDADD = \
 CFLAGS = \
 		-g \
 		-fsanitize=address -coverage \
+		-I$(top_srcdir)/lib \
 		-I$(top_srcdir)/include \
 		@LIBSYSTEMD_CFLAGS@ \
 		@GTEST_MAIN_CFLAGS@ \
@@ -31,6 +33,7 @@ CXXFLAGS = \
 		-g \
 		-std=c++11 \
 		-fsanitize=address -coverage \
+		-I$(top_srcdir)/lib \
 		-I$(top_srcdir)/include \
 		@LIBSYSTEMD_CFLAGS@ \
 		@GTEST_MAIN_CFLAGS@ \
