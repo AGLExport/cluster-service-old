@@ -1,622 +1,176 @@
-/*
- * Copyright (c) 2021, Nippon Seiki Co., Ltd.
+/**
  * SPDX-License-Identifier: Apache-2.0
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * @file	data-pool-service.c
+ * @brief	data service provider
  */
 
-#include <stdio.h>
+#include "data-pool-static-configurator.h"
+#include "cluster-api-sdevent.h"
+#include "data-pool-client.h"
+
+#include <errno.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
-#include <cluster_ipc.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+
+#include <stdio.h>
+
+/** data pool service session list */
+struct s_data_pool_session {
+	struct s_data_pool_session *next; /**< pointer to next session*/
+	sd_event_source *
+		socket_evsource; /**< UNIX Domain socket event source for data pool service */
+};
+
+/** data pool client handles */
+struct s_data_pool_client_sdevent {
+	sd_event *parent_eventloop; /**< UNIX Domain socket event source for data pool service */
+	sd_event_source *
+		socket_evsource; /**< UNIX Domain socket event source for data pool service */
+};
+typedef struct s_data_pool_client_sdevent *data_pool_client_handle_sdevent;
+
+/**
+ * Event handler for server session socket
+ *
+ * @param [in]	event		Socket event source object
+ * @param [in]	fd			File discriptor for socket session
+ * @param [in]	revents		Active event (epooll)
+ * @param [in]	userdata	Pointer to data_pool_service_handle
+ * @return int	 0 success
+ *				-1 internal error
+ */
+static int data_pool_sessions_handler(sd_event_source *event, int fd,
+				      uint32_t revents, void *userdata)
+{
+	sd_event_source *socket_source = NULL;
+	data_pool_client_handle_sdevent dp = (data_pool_client_handle_sdevent)userdata;
+	int sessionfd = -1;
+	int ret = -1;
+	ssize_t sret = -1;
+
+	if ((revents & (EPOLLHUP | EPOLLERR)) != 0) {
+		// Disconnect session
+
+		if (dp != NULL) {
+			dp->socket_evsource =
+				sd_event_source_disable_unref(dp->socket_evsource);
+		} else {
+			// Arg error or end of list or loop limit,
+			// Tihs event is not include session list. Faile safe it unref.
+			sd_event_source_disable_unref(event);
+		}
+	} else if ((revents & EPOLLIN) != 0) {
+		// Receive
+		ret = data_pool_receive(fd);
+	}
+
+	return ret;
+}
+
+/**
+ * Function for data pool passenger setup
+ *
+ * @param [in]	event	sd event loop handle
+ * @param [out]	handle	Return pointer for data pool service handle.
+ * @return int	 0 success
+ *				-1 internal error
+ *				-2 argument error
+ */
+int data_pool_client_setup_sdevent(sd_event *event, data_pool_client_handle_sdevent *handle)
+{
+	sd_event_source *socket_source = NULL;
+	struct sockaddr_un name;
+	struct s_data_pool_client_sdevent *dp = NULL;
+	int sasize = -1;
+	int fd = -1;
+	int ret = -1;
+
+	if (event == NULL || handle == NULL)
+		return -2;
+
+	dp = (struct s_data_pool_client_sdevent *)malloc(sizeof(struct s_data_pool_client_sdevent));
+	if (dp == NULL) {
+		ret = -1;
+		goto err_return;
+	}
+
+	memset(dp, 0, sizeof(*dp));
+
+	dp->parent_eventloop = event;
+
+	// Create client socket
+	fd = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC | SOCK_NONBLOCK,
+		    AF_UNIX);
+	if (fd < 0) {
+		ret = -1;
+		goto err_return;
+	}
+
+	memset(&name, 0, sizeof(name));
+
+	name.sun_family = AF_UNIX;
+	sasize = get_data_pool_service_socket_name(name.sun_path,sizeof(name.sun_path));
 
-#include <cluster_api.h>
-#include <cluster_api_internal.h>
+	ret = connect(fd, (const struct sockaddr *)&name, sizeof(name));
+	if (ret < 0) {
+		ret = -1;
+		goto err_return;
+	}	// TODO EALREADY and EINTR
 
-static IPC_DATA_IC_SERVICE_S gAllSigData;
-static unsigned long long gRegisteredSignals = 0x0000000000000000ULL;
-static IC_HMI_FUNC_NOTIFY_IC_HMI gNotifyIcHmiCB;
+	ret = sd_event_add_io(event, &socket_source, fd, EPOLLIN,
+			      data_pool_sessions_handler, dp);
+	if (ret < 0) {
+		ret = -1;
+		goto err_return;
+	}
 
-static IPC_RET_E clusterClientStart(void);
-static IPC_RET_E clusterReadDataPool(void);
-static IPC_RET_E clusterRegisterCallback(void);
-static IPC_RET_E clusterClientStop(void);
-static void notifyCheck(void* pData, signed int size, int kind);
+	// Set automatically fd closen at delete object.
+	ret = sd_event_source_set_io_fd_own(socket_source, 1);
+	if (ret < 0) {
+		ret = -1;
+		goto err_return;
+	}
 
-// == Internal functions ==
-static IPC_RET_E clusterClientStart(void)
-{
-    IPC_RET_E ret;
-
-    ret = ipcClientStart(IPC_USAGE_TYPE_IC_SERVICE);
-    E_CHECK(ret == IPC_RET_OK, ret, end);
-
-end:
-    return ret;
-}
-
-static IPC_RET_E clusterRegisterCallback(void)
-{
-    IPC_RET_E ret;
-
-    ret = ipcRegisterCallback(IPC_USAGE_TYPE_IC_SERVICE, &notifyCheck);
-    E_CHECK(ret == IPC_RET_OK, ret, end);
-
-end:
-    return ret;
-}
-
-static void notifyCheck(void* pData, signed int size, int kind)
-{
-    IC_HMI_ON_OFF data = 0;
-
-    if (gNotifyIcHmiCB == NULL) {
-        return;
-    }
-
-    // If signal is registered, notify IC HMI
-    if (gSigTable[kind] == (gSigTable[kind] & gRegisteredSignals))
-    {
-        memcpy(&data, pData, size);
-        gNotifyIcHmiCB(gSigTable[kind], data);
-    }
-}
-
-static IPC_RET_E clusterClientStop(void)
-{
-    IPC_RET_E ret;
-
-    ret = ipcClientStop(IPC_USAGE_TYPE_IC_SERVICE);
-    E_CHECK(ret == IPC_RET_OK, ret, end);
-
-  end:
-    return ret;
-}
-
-static IPC_RET_E clusterReadDataPool()
-{
-    IPC_RET_E ret;
-    int sigDataSize = sizeof(gAllSigData);
-
-    ret = ipcReadDataPool(IPC_USAGE_TYPE_IC_SERVICE, &gAllSigData, &sigDataSize);
-    E_CHECK(ret == IPC_RET_OK, ret, end);
-    E_CHECK(sigDataSize == sizeof(gAllSigData), sigDataSize, end);
-
-    ret = IPC_RET_OK;
-
-end:
-    return ret;
-}
-
-// == API functions for apps ==
-// === Initialize/Terminate ===
-bool clusterInit(void)
-{
-    bool ret = false;
-    IPC_RET_E rc;
-
-    memset(&gAllSigData, 0x00, sizeof(gAllSigData));
-    gRegisteredSignals = 0x0000000000000000ULL;
-    gNotifyIcHmiCB = NULL;
-
-    rc = clusterClientStart();
-    E_CHECK(rc == IPC_RET_OK, rc, end);
-
-    rc = clusterRegisterCallback();
-    E_CHECK(rc == IPC_RET_OK, rc, end);
-
-    ret = true;
-end:
-    return ret;
-}
-
-bool clusterTerm(void)
-{
-    bool ret = false;
-    IPC_RET_E rc;
-
-    rc = clusterClientStop();
-    E_CHECK(rc == IPC_RET_OK, rc, end);
-
-    memset(&gAllSigData, 0x00, sizeof(gAllSigData));
-    gRegisteredSignals = 0x0000000000000000ULL;
-    gNotifyIcHmiCB = NULL;
-
-    ret = true;
-end:
-    return ret;
-}
-
-// === Register/Notify ===
-bool registerIcHmi(unsigned long long arg_1, IC_HMI_FUNC_NOTIFY_IC_HMI addr)
-{
-    if (addr == NULL) {
-        return false;
-    }
-
-    gNotifyIcHmiCB = addr;
-    gRegisteredSignals = (gRegisteredSignals | arg_1);
-
-    return true;
-}
-
-
-// === Telltale ===
-IC_HMI_ON_OFF getTurnR(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.turnR;
-}
-
-IC_HMI_ON_OFF getTurnL(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.turnL;
-}
-
-IC_HMI_ON_OFF getBrake(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.brake;
-}
-
-IC_HMI_ON_OFF getSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.seatbelt;
-}
-
-IC_HMI_ON_OFF getFrontRightSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.frontRightSeatbelt;
-}
-
-IC_HMI_ON_OFF getFrontCenterSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.frontCenterSeatbelt;
-}
-
-IC_HMI_ON_OFF getFrontLeftSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.frontLeftSeatbelt;
-}
-
-IC_HMI_ON_OFF getMid1RightSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.mid1RightSeatbelt;
-}
-
-IC_HMI_ON_OFF getMid1CenterSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.mid1CenterSeatbelt;
-}
-
-IC_HMI_ON_OFF getMid1LeftSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.mid1LeftSeatbelt;
-}
-
-IC_HMI_ON_OFF getMid2RightSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.mid2RightSeatbelt;
-}
-
-IC_HMI_ON_OFF getMid2CenterSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.mid2CenterSeatbelt;
-}
-
-IC_HMI_ON_OFF getMid2LeftSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.mid2LeftSeatbelt;
-}
-
-IC_HMI_ON_OFF getRearRightSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.rearRightSeatbelt;
-}
-
-IC_HMI_ON_OFF getRearCenterSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.rearCenterSeatbelt;
-}
-
-IC_HMI_ON_OFF getRearLeftSeatbelt(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.rearLeftSeatbelt;
-}
-
-IC_HMI_ON_OFF getHighbeam(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.highbeam;
-}
-
-IC_HMI_ON_OFF getDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.door;
-}
-
-IC_HMI_ON_OFF getFrontRightDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.frontRightDoor;
-}
-
-IC_HMI_ON_OFF getFrontLeftDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.frontLeftDoor;
-}
-
-IC_HMI_ON_OFF getRearRightDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.rearRightDoor;
-}
-
-IC_HMI_ON_OFF getRearLeftDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.rearLeftDoor;
-}
-
-IC_HMI_ON_OFF getTrunkDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.trunkDoor;
-}
-
-IC_HMI_ON_OFF getHoodDoor(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.hoodDoor;
-}
-
-IC_HMI_ON_OFF getEps(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.eps;
-}
-
-IC_HMI_ON_OFF getSrsAirbag(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.srsAirbag;
-}
-
-IC_HMI_ON_OFF getAbs(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.abs;
-}
-
-IC_HMI_ON_OFF getLowBattery(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.lowBattery;
-}
-
-IC_HMI_ON_OFF getOilPress(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.oilPress;
-}
+	// After the automaticall fd close settig shall not close fd in error path
+	fd = -1;
 
-IC_HMI_ON_OFF getEngine(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.engine;
-}
-
-IC_HMI_ON_OFF getFuel(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.fuel;
-}
-
-IC_HMI_ON_OFF getImmobi(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.immobi;
-}
-
-IC_HMI_ON_OFF getTMFail(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.tmFail;
-}
-
-IC_HMI_ON_OFF getEspAct(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.espAct;
-}
-
-IC_HMI_ON_OFF getEspOff(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.espOff;
-}
-
-IC_HMI_ON_OFF getAdaptingLighting(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.adaptingLighting;
-}
-
-IC_HMI_ON_OFF getAutoStop(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.autoStop;
-}
-
-IC_HMI_ON_OFF getAutoStopFail(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.autoStopFail;
-}
-
-IC_HMI_ON_OFF getParkingLights(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.parkingLights;
-}
-
-IC_HMI_ON_OFF getFrontFog(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.frontFog;
-}
-
-IC_HMI_ON_OFF getExteriorLightFault(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.exteriorLightFault;
-}
-
-IC_HMI_ON_OFF getAccFail(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.accFail;
-}
-
-IC_HMI_ON_OFF getLdwOff(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.ldwOff;
-}
-
-IC_HMI_ON_OFF getHillDescent(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.hillDescent;
-}
-
-IC_HMI_ON_OFF getAutoHiBeamGreen(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.autoHiBeamGreen;
-}
-
-IC_HMI_ON_OFF getAutoHiBeamAmber(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.autoHiBeamAmber;
-}
-
-IC_HMI_ON_OFF getSportsMode(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.sportsMode;
-}
-
-IC_HMI_ON_OFF getLdwOperate(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.ldwOperate;
-}
-
-IC_HMI_ON_OFF getGeneralWarn(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.generalWarn;
-}
-
-IC_HMI_ON_OFF getDriverPowerMode(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.drivingPowerMode;
-}
-
-IC_HMI_ON_OFF getHotTemp(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.hotTemp;
-}
-
-IC_HMI_ON_OFF getLowTemp(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.lowTemp;
-}
-
-// === TripComputer ===
-unsigned long getTrcomTripAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.trcomTripAVal;
-}
-
-unsigned long getTrcomTripBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.trcomTripBVal;
-}
-
-unsigned long getTrcomOdoVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.trcomOdoVal;
-}
-
-IC_HMI_TRCOM_UNIT_VAL getTrcomUnitVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.trcomUnitVal;
-}
-
-unsigned short getAvgSpeedAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.avgSpeedAVal;
-}
-
-unsigned short getAvgSpeedBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.avgSpeedBVal;
-}
-
-unsigned short getHourAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.hourAVal;
-}
-
-unsigned short getHourBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.hourBVal;
-}
-
-unsigned char getMinuteAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.minuteAVal;
-}
-
-unsigned char getMinuteBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.minuteBVal;
-}
-
-unsigned char getSecondAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.secondAVal;
-}
-
-unsigned char getSecondBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.secondBVal;
-}
-
-signed short getOTempVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.oTempVal;
-}
-
-IC_HMI_OTEMP_UNIT_VAL getOTempUnitVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.oTempUnitVal;
-}
-
-unsigned short getCruRangeVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.cruRangeVal;
-}
-
-unsigned short getAvgFuelAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.avgFuelAVal;
-}
+	dp->socket_evsource = socket_source;
 
-unsigned short getAvgFuelBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.avgFuelBVal;
-}
+	(*handle) = dp;
 
-unsigned short getInsFuelAVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.insFuelAVal;
-}
+	return 0;
 
-unsigned short getInsFuelBVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.insFuelBVal;
-}
+err_return:
+	socket_source = sd_event_source_disable_unref(socket_source);
+	free(dp);
+	if (fd != -1)
+		close(fd);
 
-IC_HMI_FUEL_ECONOMY_UNIT_VAL getFuelEconomyUnitVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.fuelEconomyUnitVal;
+	return ret;
 }
 
-// === ShiftPosition ===
-IC_HMI_GEAR_AT_VAL getGearAtVal(void)
+/**
+ * Function for data pool passenger cleanup
+ *
+ * @param [in]	handle	Return pointer to data pool service handle.
+ * @return int	 0 success
+ */
+int data_pool_client_cleanup_sdevent(data_pool_client_handle_sdevent handle)
 {
-    clusterReadDataPool();
-    return gAllSigData.gearAtVal;
-}
+	struct s_data_pool_client_sdevent *dp = handle;
 
-IC_HMI_GEAR_MT_VAL getGearMtVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.gearMtVal;
-}
+	// NULL through
+	if (handle == NULL)
+		return 0;
 
-// === Speed ===
-unsigned long getSpAnalogVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.spAnalogVal;
-}
+	(void)sd_event_source_disable_unref(dp->socket_evsource);
 
-IC_HMI_SP_UNIT_VAL getSpAnaDigUnitVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.spAnaDigUnitVal;
-}
+	free(dp);
 
-// === Tacho ===
-unsigned long getTaAnalogVal(void)
-{
-    clusterReadDataPool();
-    return gAllSigData.taAnalogVal;
+	return 0;
 }
-
