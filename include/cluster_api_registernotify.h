@@ -18,10 +18,10 @@
 #ifndef CLUSTER_API_REGISTERNOTIFY_H
 #define CLUSTER_API_REGISTERNOTIFY_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-typedef void(* IC_HMI_FUNC_NOTIFY_IC_HMI)(uint64_t arg_1, IC_HMI_ON_OFF arg_2);
+typedef void (*IC_HMI_FUNC_NOTIFY_IC_HMI)(uint64_t arg_1, IC_HMI_ON_OFF arg_2);
 
 bool registerIcHmi(uint64_t arg_1, IC_HMI_FUNC_NOTIFY_IC_HMI addr);
 

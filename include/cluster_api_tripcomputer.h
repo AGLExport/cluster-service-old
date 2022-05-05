@@ -20,29 +20,26 @@
 
 #include <stdint.h>
 
-typedef enum
-{
-    IC_HMI_TRCOM_KM = 0,
-    IC_HMI_TRCOM_MILE = 1,
+typedef enum {
+	IC_HMI_TRCOM_KM = 0,
+	IC_HMI_TRCOM_MILE = 1,
 } IC_HMI_TRCOM_UNIT_VAL;
 
-typedef enum
-{
-    IC_HMI_FUEL_KM_L = 0,
-    IC_HMI_FUEL_MPG_US,
-    IC_HMI_FUEL_MPG_IG,
-    IC_HMI_FUEL_L_100KM,
-    IC_HMI_FUEL_MILE_KWH,
-    IC_HMI_FUEL_KM_KWH,
-    IC_HMI_FUEL_MILE_KG,
-    IC_HMI_FUEL_KM_KG,
-    IC_HMI_FUEL_KWH_100KM,
+typedef enum {
+	IC_HMI_FUEL_KM_L = 0,
+	IC_HMI_FUEL_MPG_US,
+	IC_HMI_FUEL_MPG_IG,
+	IC_HMI_FUEL_L_100KM,
+	IC_HMI_FUEL_MILE_KWH,
+	IC_HMI_FUEL_KM_KWH,
+	IC_HMI_FUEL_MILE_KG,
+	IC_HMI_FUEL_KM_KG,
+	IC_HMI_FUEL_KWH_100KM,
 } IC_HMI_FUEL_ECONOMY_UNIT_VAL;
 
-typedef enum
-{
-    IC_HMI_OTEMP_UNIT_C = 0,
-    IC_HMI_OTEMP_UNIT_K = 1,
+typedef enum {
+	IC_HMI_OTEMP_UNIT_C = 0,
+	IC_HMI_OTEMP_UNIT_K = 1,
 } IC_HMI_OTEMP_UNIT_VAL;
 
 uint64_t getTrcomTripAVal(void);

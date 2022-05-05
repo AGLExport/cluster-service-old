@@ -5,10 +5,10 @@
  * @brief	data service provider
  */
 
-#include "data-pool-static-configurator.h"
 #include "data-pool-service.h"
-#include "ipc_protocol.h"
+#include "data-pool-static-configurator.h"
 #include "data-pool-storage.h"
+#include "ipc_protocol.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -62,7 +62,7 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 
 	result = 0;
 
-	
+
 	if (dp->session_list != NULL) {
 		listp = dp->session_list;
 
@@ -292,17 +292,17 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 		return -2;
 
 	// clean and setup data packet
-	memset(&g_packet,0,sizeof(g_packet));
+	memset(&g_packet, 0, sizeof(g_packet));
 	g_packet.header.magic = AGLCLUSTER_SERVICE_PACKETHEADER_MAGIC;
 	g_packet.header.version = AGLCLUSTER_SERVICE_PACKET_VERSION_V1;
-	
+
 	// unlink existing sicket file.
 	if (get_data_pool_service_socket_name_type() == 0) {
 		// If sock name type equal socket file, it remove.
 		char filename[128];
-		memset(filename,0,sizeof(filename));
-		(void)get_data_pool_service_socket_name(filename, sizeof(filename));
-		(void)unlink(filename);
+		memset(filename, 0, sizeof(filename));
+		(void) get_data_pool_service_socket_name(filename, sizeof(filename));
+		(void) unlink(filename);
 	}
 
 	dp = (struct s_data_pool_service *) malloc(sizeof(struct s_data_pool_service));
@@ -325,7 +325,7 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	memset(&name, 0, sizeof(name));
 
 	name.sun_family = AF_UNIX;
-	sasize = get_data_pool_service_socket_name(name.sun_path,sizeof(name.sun_path));
+	sasize = get_data_pool_service_socket_name(name.sun_path, sizeof(name.sun_path));
 
 	ret = bind(fd, (const struct sockaddr *) &name, sasize + sizeof(sa_family_t));
 	if (ret < 0) {

@@ -4,9 +4,9 @@
  * @file	data-pool-service.c
  * @brief	data service provider
  */
+#include "data-pool.h"
 #include "cluster_api.h"
 #include "data-pool-static-configurator.h"
-#include "data-pool.h"
 
 #include <pthread.h>
 #include <string.h>
@@ -18,7 +18,7 @@ struct s_agl_cluster_data_pool {
 };
 
 static struct s_agl_cluster_data_pool g_agl_cluster_data_pool = {
-.data_pool_lock = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP,
+	.data_pool_lock = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP,
 };
 
 /**
@@ -34,16 +34,15 @@ static struct s_agl_cluster_data_pool g_agl_cluster_data_pool = {
 int data_pool_set_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
 {
 	int ret = -1;
-	
-	if (data_pool_lock() == true)
-	{
+
+	if (data_pool_lock() == true) {
 		memcpy(&g_agl_cluster_data_pool.data, data, sizeof(g_agl_cluster_data_pool.data));
-		
-		(void)data_pool_unlock();
+
+		(void) data_pool_unlock();
 
 		ret = 0;
 	}
-	
+
 	return ret;
 }
 /**
@@ -56,16 +55,15 @@ int data_pool_set_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
 int data_pool_get_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
 {
 	int ret = -1;
-	
-	if (data_pool_lock() == true)
-	{
-		memcpy(data , &g_agl_cluster_data_pool.data, sizeof(struct S_AGLCLUSTER_SERVICE_DATA_V1));
-		
-		(void)data_pool_unlock();
+
+	if (data_pool_lock() == true) {
+		memcpy(data, &g_agl_cluster_data_pool.data, sizeof(struct S_AGLCLUSTER_SERVICE_DATA_V1));
+
+		(void) data_pool_unlock();
 
 		ret = 0;
 	}
-	
+
 	return ret;
 }
 /**
@@ -81,7 +79,7 @@ bool data_pool_lock(void)
 	ret = pthread_mutex_lock(&g_agl_cluster_data_pool.data_pool_lock);
 	if (ret < 0)
 		result = false;
-	
+
 	return result;
 }
 
@@ -98,7 +96,7 @@ bool data_pool_unlock(void)
 	ret = pthread_mutex_unlock(&g_agl_cluster_data_pool.data_pool_lock);
 	if (ret < 0)
 		result = false;
-	
+
 	return result;
 }
 
@@ -1256,7 +1254,7 @@ IC_HMI_ON_OFF data_pool_get_low_temp(void)
 /**
  * Data pool setter for Trcom TripA Val
  *
- * @param [in]	val		Value for Trcom TripA 
+ * @param [in]	val		Value for Trcom TripA
  * @return void
  */
 void data_pool_set_trcom_trip_a_val(uint32_t val)
@@ -1373,7 +1371,7 @@ void data_pool_set_avg_speed_b_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_avg_speed_b_val(void)
 {
@@ -1395,7 +1393,7 @@ void data_pool_set_hour_a_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_hour_a_val(void)
 {
@@ -1417,7 +1415,7 @@ void data_pool_set_hour_b_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_hour_b_val(void)
 {
@@ -1439,7 +1437,7 @@ void data_pool_set_minute_a_val(uint8_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint8_t data_pool_get_minute_a_val(void)
 {
@@ -1461,7 +1459,7 @@ void data_pool_set_minute_b_val(uint8_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint8_t data_pool_get_minute_b_val(void)
 {
@@ -1483,7 +1481,7 @@ void data_pool_set_second_a_val(uint8_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint8_t data_pool_get_second_a_val(void)
 {
@@ -1505,7 +1503,7 @@ void data_pool_set_second_b_val(uint8_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint8_t data_pool_get_second_b_val(void)
 {
@@ -1527,7 +1525,7 @@ void data_pool_set_o_temp_val(int16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 int16_t data_pool_get_o_temp_val(void)
 {
@@ -1549,7 +1547,7 @@ void data_pool_set_o_temp_unit_val(IC_HMI_OTEMP_UNIT_VAL val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 IC_HMI_OTEMP_UNIT_VAL data_pool_get_o_temp_unit_val(void)
 {
@@ -1571,7 +1569,7 @@ void data_pool_set_cru_range_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_cru_range_val(void)
 {
@@ -1593,7 +1591,7 @@ void data_pool_set_avg_fuel_a_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_avg_fuel_a_val(void)
 {
@@ -1615,7 +1613,7 @@ void data_pool_set_avg_fuel_b_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_avg_fuel_b_val(void)
 {
@@ -1637,7 +1635,7 @@ void data_pool_set_ins_fuel_a_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_ins_fuel_a_val(void)
 {
@@ -1659,7 +1657,7 @@ void data_pool_set_ins_fuel_b_val(uint16_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint16_t data_pool_get_ins_fuel_b_val(void)
 {
@@ -1681,7 +1679,7 @@ void data_pool_set_fuel_economy_uit_val(IC_HMI_FUEL_ECONOMY_UNIT_VAL val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 IC_HMI_FUEL_ECONOMY_UNIT_VAL data_pool_get_fuel_economy_uit_val(void)
 {
@@ -1706,7 +1704,7 @@ void data_pool_set_gear_at_val(IC_HMI_GEAR_AT_VAL val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 IC_HMI_GEAR_AT_VAL data_pool_get_gear_at_val(void)
 {
@@ -1728,7 +1726,7 @@ void data_pool_set_gear_mt_val(IC_HMI_GEAR_MT_VAL val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 IC_HMI_GEAR_MT_VAL data_pool_get_gear_mt_val(void)
 {
@@ -1753,7 +1751,7 @@ void data_pool_set_speed_analog_val(uint32_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint32_t data_pool_get_speed_analog_val(void)
 {
@@ -1775,7 +1773,7 @@ void data_pool_set_speed_analog_digital_val(IC_HMI_SP_UNIT_VAL val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 IC_HMI_SP_UNIT_VAL data_pool_get_speed_analog_digital_val(void)
 {
@@ -1800,10 +1798,9 @@ void data_pool_set_tacho_analog_val(uint32_t val)
  *
  * @param [in]	void
  * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
- 							IC_HMI_ON	off
+							IC_HMI_ON	off
  */
 uint32_t data_pool_get_tacho_analog_val(void)
 {
 	return g_agl_cluster_data_pool.data.taAnalogVal;
 }
-

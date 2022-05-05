@@ -5,14 +5,14 @@
  * @brief	data service provider
  */
 
-#include "data-pool-static-configurator.h"
 #include "cluster-api-sdevent.h"
 #include "data-pool-client.h"
+#include "data-pool-static-configurator.h"
 
 #include <errno.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -22,15 +22,13 @@
 /** data pool service session list */
 struct s_data_pool_session {
 	struct s_data_pool_session *next; /**< pointer to next session*/
-	sd_event_source *
-		socket_evsource; /**< UNIX Domain socket event source for data pool service */
+	sd_event_source *socket_evsource; /**< UNIX Domain socket event source for data pool service */
 };
 
 /** data pool client handles */
 struct s_data_pool_client_sdevent {
-	sd_event *parent_eventloop; /**< UNIX Domain socket event source for data pool service */
-	sd_event_source *
-		socket_evsource; /**< UNIX Domain socket event source for data pool service */
+	sd_event *parent_eventloop;	  /**< UNIX Domain socket event source for data pool service */
+	sd_event_source *socket_evsource; /**< UNIX Domain socket event source for data pool service */
 };
 typedef struct s_data_pool_client_sdevent *data_pool_client_handle_sdevent;
 
@@ -44,11 +42,10 @@ typedef struct s_data_pool_client_sdevent *data_pool_client_handle_sdevent;
  * @return int	 0 success
  *				-1 internal error
  */
-static int data_pool_sessions_handler(sd_event_source *event, int fd,
-				      uint32_t revents, void *userdata)
+static int data_pool_sessions_handler(sd_event_source *event, int fd, uint32_t revents, void *userdata)
 {
 	sd_event_source *socket_source = NULL;
-	data_pool_client_handle_sdevent dp = (data_pool_client_handle_sdevent)userdata;
+	data_pool_client_handle_sdevent dp = (data_pool_client_handle_sdevent) userdata;
 	int sessionfd = -1;
 	int ret = -1;
 	ssize_t sret = -1;
@@ -57,8 +54,7 @@ static int data_pool_sessions_handler(sd_event_source *event, int fd,
 		// Disconnect session
 
 		if (dp != NULL) {
-			dp->socket_evsource =
-				sd_event_source_disable_unref(dp->socket_evsource);
+			dp->socket_evsource = sd_event_source_disable_unref(dp->socket_evsource);
 		} else {
 			// Arg error or end of list or loop limit,
 			// Tihs event is not include session list. Faile safe it unref.
@@ -93,7 +89,7 @@ int data_pool_client_setup_sdevent(sd_event *event, data_pool_client_handle_sdev
 	if (event == NULL || handle == NULL)
 		return -2;
 
-	dp = (struct s_data_pool_client_sdevent *)malloc(sizeof(struct s_data_pool_client_sdevent));
+	dp = (struct s_data_pool_client_sdevent *) malloc(sizeof(struct s_data_pool_client_sdevent));
 	if (dp == NULL) {
 		ret = -1;
 		goto err_return;
@@ -104,8 +100,7 @@ int data_pool_client_setup_sdevent(sd_event *event, data_pool_client_handle_sdev
 	dp->parent_eventloop = event;
 
 	// Create client socket
-	fd = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC | SOCK_NONBLOCK,
-		    AF_UNIX);
+	fd = socket(AF_UNIX, SOCK_SEQPACKET | SOCK_CLOEXEC | SOCK_NONBLOCK, AF_UNIX);
 	if (fd < 0) {
 		ret = -1;
 		goto err_return;
@@ -114,16 +109,15 @@ int data_pool_client_setup_sdevent(sd_event *event, data_pool_client_handle_sdev
 	memset(&name, 0, sizeof(name));
 
 	name.sun_family = AF_UNIX;
-	sasize = get_data_pool_service_socket_name(name.sun_path,sizeof(name.sun_path));
+	sasize = get_data_pool_service_socket_name(name.sun_path, sizeof(name.sun_path));
 
-	ret = connect(fd, (const struct sockaddr *)&name, sasize + sizeof(sa_family_t));
+	ret = connect(fd, (const struct sockaddr *) &name, sasize + sizeof(sa_family_t));
 	if (ret < 0) {
 		ret = -1;
 		goto err_return;
-	}	// TODO EALREADY and EINTR
+	} // TODO EALREADY and EINTR
 
-	ret = sd_event_add_io(event, &socket_source, fd, EPOLLIN,
-			      data_pool_sessions_handler, dp);
+	ret = sd_event_add_io(event, &socket_source, fd, EPOLLIN, data_pool_sessions_handler, dp);
 	if (ret < 0) {
 		ret = -1;
 		goto err_return;
@@ -168,7 +162,7 @@ int data_pool_client_cleanup_sdevent(data_pool_client_handle_sdevent handle)
 	if (handle == NULL)
 		return 0;
 
-	(void)sd_event_source_disable_unref(dp->socket_evsource);
+	(void) sd_event_source_disable_unref(dp->socket_evsource);
 
 	free(dp);
 

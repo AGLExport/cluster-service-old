@@ -21,17 +21,18 @@
 /** data pool service static configurator. It shall be set statically bosth service and client library.*/
 struct s_data_pool_service_configure {
 	uint64_t notification_interval; /**< Parametor for data pool notification interval */
-	
-	int32_t data_pool_service_session_limit; /**< Parametor for internal limitation for datapool service sessions. It use link list search limit. */
-	
+
+	int32_t data_pool_service_session_limit; /**< Parametor for internal limitation for datapool service
+						    sessions. It use link list search limit. */
+
 	char socket_name[92]; /**< data pool socket name */
 };
 typedef struct s_data_pool_service_configure data_pool_service_staticconfig;
 
 static const struct s_data_pool_service_configure g_config = {
-	.notification_interval = (500 * 1000),	// usec
-	.data_pool_service_session_limit = (100),	// counts
-	
+	.notification_interval = (500 * 1000),	  // usec
+	.data_pool_service_session_limit = (100), // counts
+
 	.socket_name = "\0/agl/agl-cluster-service",
 };
 
@@ -52,7 +53,7 @@ uint64_t get_data_pool_notification_interval(void)
  */
 int get_data_pool_service_session_limit(void)
 {
-	return (int)g_config.data_pool_service_session_limit;
+	return (int) g_config.data_pool_service_session_limit;
 }
 
 /**
@@ -67,8 +68,8 @@ int get_data_pool_service_socket_name(char *str, int len)
 {
 	if (len >= sizeof(g_config.socket_name)) {
 		(void) memcpy(str, g_config.socket_name, sizeof(g_config.socket_name));
-		
-		if(g_config.socket_name[0] == '\0'){
+
+		if (g_config.socket_name[0] == '\0') {
 			// abstract socket
 			int bytes = 1;
 			for (bytes = 1; bytes < sizeof(g_config.socket_name); bytes++) {
@@ -93,10 +94,9 @@ int get_data_pool_service_socket_name(char *str, int len)
 int get_data_pool_service_socket_name_type(void)
 {
 	int ret = 0;
-	
-	if(g_config.socket_name[0] == '\0')
+
+	if (g_config.socket_name[0] == '\0')
 		ret = 1;
 
 	return ret;
 }
-

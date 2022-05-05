@@ -20,10 +20,9 @@
 
 #include <stdint.h>
 
-typedef enum
-{
-    IC_HMI_SP_KM_H = 0,
-    IC_HMI_SP_MPH = 1,
+typedef enum {
+	IC_HMI_SP_KM_H = 0,
+	IC_HMI_SP_MPH = 1,
 } IC_HMI_SP_UNIT_VAL;
 
 uint64_t getSpAnalogVal(void);

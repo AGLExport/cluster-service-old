@@ -19,16 +19,16 @@
 #define CLUSTER_API_H
 
 typedef enum {
-    IC_HMI_OFF = 0,
-    IC_HMI_ON,
+	IC_HMI_OFF = 0,
+	IC_HMI_ON,
 } IC_HMI_ON_OFF;
 
-#include <cluster_api_telltale.h>
+#include <cluster_api_registernotify.h>
 #include <cluster_api_shiftposition.h>
 #include <cluster_api_speed.h>
 #include <cluster_api_tacho.h>
+#include <cluster_api_telltale.h>
 #include <cluster_api_tripcomputer.h>
-#include <cluster_api_registernotify.h>
 
 bool clusterInit(void);
 bool clusterTerm(void);
