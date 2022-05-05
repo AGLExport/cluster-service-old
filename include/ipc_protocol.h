@@ -20,6 +20,9 @@
 //-----------------------------------------------------------------------------//-----------------------------------------------------------------------------
 #include <stdint.h>
 
+#define AGLCLUSTER_SERVICE_PACKETHEADER_MAGIC (0xbdacffeeu)
+#define AGLCLUSTER_SERVICE_PACKET_VERSION_V1 (1)
+
 struct __attribute__((packed)) S_AGLCLUSTER_SERVICE_PACKETHEADER_V1 {
 	uint32_t magic;
 	uint32_t version;
@@ -124,4 +127,4 @@ typedef struct S_AGLCLUSTER_SERVICE_PACKET_V1 AGLCLUSTER_SERVICE_PACKET_V1;
 typedef struct S_AGLCLUSTER_SERVICE_PACKET_V1 AGLCLUSTER_SERVICE_PACKET;
 
 //-----------------------------------------------------------------------------
-#endif //AGLCLUSTER_SERVICE_PROTOCOL_H
+#endif // AGLCLUSTER_SERVICE_PROTOCOL_H

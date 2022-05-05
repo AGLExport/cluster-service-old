@@ -6,7 +6,7 @@
  */
 
 #include "cluster-service-util.h"
-#include "data-pool-client.h"
+#include "cluster-api-sdevent.h"
 
 #include <stdlib.h>
 #include <systemd/sd-daemon.h>
@@ -17,7 +17,7 @@
 int main(int argc, char *argv[])
 {
 	sd_event *event = NULL;
-	data_pool_client_handle handle = NULL;
+	data_pool_client_handle_sdevent handle = NULL;
 	int ret = -1;
 
 	ret = sd_event_default(&event);
@@ -33,7 +33,9 @@ int main(int argc, char *argv[])
 	if (ret < 0)
 		goto finish;
 
-	ret = data_pool_client_setup(event, &handle);
+	ret = data_pool_client_setup_sdevent(event, &handle);
+	if (ret < 0)
+		goto finish;
 
 	(void)sd_notify(1,
 			"READY=1\n"
@@ -41,7 +43,7 @@ int main(int argc, char *argv[])
 	ret = sd_event_loop(event);
 
 finish:
-	(void)data_pool_client_cleanup(handle);
+	(void)data_pool_client_cleanup_sdevent(handle);
 	event = sd_event_unref(event);
 
 	return ret < 0 ? EXIT_FAILURE : EXIT_SUCCESS;

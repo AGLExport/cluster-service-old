@@ -18,9 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <stdbool.h>
-
-#include <cluster_ipc.h>
 
 #include <cluster_api.h>
 #include <cluster_api_internal.h>
@@ -37,7 +36,7 @@ static void notifyCheck(void* pData, signed int size, int kind);
 
 
 // === Register/Notify ===
-bool registerIcHmi(unsigned long long arg_1, IC_HMI_FUNC_NOTIFY_IC_HMI addr)
+bool registerIcHmi(uint64_t arg_1, IC_HMI_FUNC_NOTIFY_IC_HMI addr)
 {
     if (addr == NULL) {
         return false;

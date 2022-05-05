@@ -116,7 +116,7 @@ int data_pool_client_setup_sdevent(sd_event *event, data_pool_client_handle_sdev
 	name.sun_family = AF_UNIX;
 	sasize = get_data_pool_service_socket_name(name.sun_path,sizeof(name.sun_path));
 
-	ret = connect(fd, (const struct sockaddr *)&name, sizeof(name));
+	ret = connect(fd, (const struct sockaddr *)&name, sasize + sizeof(sa_family_t));
 	if (ret < 0) {
 		ret = -1;
 		goto err_return;

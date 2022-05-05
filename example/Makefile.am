@@ -4,12 +4,12 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 bin_PROGRAMS = cluster_client
 
 cluster_client_SOURCES = \
-		data-pool-client.c \
 		cluster-client.c 
 
 # options
 # Additional library
 cluster_client_LDADD = \
+		$(top_srcdir)/lib/libcluster_service_client.a \
 		$(top_srcdir)/lib/libcluster_service_common.a \
 		-lrt -lpthread \
 		@LIBSYSTEMD_LIBS@ 

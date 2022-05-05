@@ -18,6 +18,8 @@
 #ifndef CLUSTER_API_TACHO_H
 #define CLUSTER_API_TACHO_H
 
-unsigned long getTaAnalogVal(void);
+#include <stdint.h>
+
+uint64_t getTaAnalogVal(void);
 
 #endif // CLUSTER_API_TACHO_H

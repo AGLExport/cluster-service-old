@@ -8,6 +8,7 @@
 #include "data-pool-static-configurator.h"
 #include "data-pool-service.h"
 #include "ipc_protocol.h"
+#include "data-pool-storage.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -34,7 +35,7 @@ struct s_data_pool_service {
 };
 typedef struct s_data_pool_service *data_pool_service_handle;
 
-AGLCLUSTER_SERVICE_PACKET packet;
+static AGLCLUSTER_SERVICE_PACKET g_packet;
 
 /**
  * Data pool message passenger
@@ -51,19 +52,23 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 	ssize_t ret = -1;
 	int result = -1;
 
-	packet.header.seqnum++;
-
 	if (dp == NULL)
 		return -2;
 
+	g_packet.header.seqnum++;
+	ret = data_pool_get_v1(&g_packet.data);
+	if (ret < 0)
+		goto out;
+
 	result = 0;
 
+	
 	if (dp->session_list != NULL) {
 		listp = dp->session_list;
 
 		for (int i = 0; i < get_data_pool_service_session_limit(); i++) {
 			fd = sd_event_source_get_io_fd(listp->socket_evsource);
-			ret = write(fd, &packet, sizeof(packet));
+			ret = write(fd, &g_packet, sizeof(g_packet));
 			if (ret < 0) {
 				if (errno == EINTR)
 					continue;
@@ -82,6 +87,7 @@ static int data_pool_message_passanger(data_pool_service_handle dp)
 		result = -1;
 	}
 
+out:
 	return result;
 }
 
@@ -285,6 +291,11 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	if (event == NULL || handle == NULL)
 		return -2;
 
+	// clean and setup data packet
+	memset(&g_packet,0,sizeof(g_packet));
+	g_packet.header.magic = AGLCLUSTER_SERVICE_PACKETHEADER_MAGIC;
+	g_packet.header.version = AGLCLUSTER_SERVICE_PACKET_VERSION_V1;
+	
 	// unlink existing sicket file.
 	if (get_data_pool_service_socket_name_type() == 0) {
 		// If sock name type equal socket file, it remove.

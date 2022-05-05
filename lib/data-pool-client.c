@@ -8,6 +8,7 @@
 #include "data-pool-static-configurator.h"
 #include "ipc_protocol.h"
 #include "data-pool-client.h"
+#include "data-pool-storage.h"
 
 #include <stdbool.h>
 #include <errno.h>
@@ -55,7 +56,7 @@ int data_pool_receive(int fd)
 	sret = read(fd, &packet,sizeof(packet));
 	if (sret == sizeof(packet)) {
 		if (data_pool_packet_check_v1(&packet.header) == true) {
-			ret = 0;
+			ret = data_pool_set_v1(&packet.data);
 		}
 	} else {
 		ret = -1;

@@ -33,7 +33,4 @@ typedef enum {
 bool clusterInit(void);
 bool clusterTerm(void);
 
-// Callback function pointer type
-typedef void (*IC_HMI_FUNC_NOTIFY_IC_HMI)(unsigned long long arg_1, IC_HMI_ON_OFF arg_2);
-
 #endif // CLUSTER_API_H
