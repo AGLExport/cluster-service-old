@@ -13,13 +13,17 @@
 
 /** data pool client data */
 struct s_agl_cluster_data_pool {
+	change_notify_function_t notify;
 	pthread_mutex_t data_pool_lock;
 	struct S_AGLCLUSTER_SERVICE_DATA_V1 data;
 };
 
 static struct s_agl_cluster_data_pool g_agl_cluster_data_pool = {
+	.notify = NULL,
 	.data_pool_lock = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP,
 };
+
+static uint64_t data_pool_check_change_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data);
 
 /**
  *  ====== Data Management ================================
@@ -29,16 +33,25 @@ static struct s_agl_cluster_data_pool g_agl_cluster_data_pool = {
  *
  * @param [in]	data	Memory for set data pool full size v1 data
  * @return int	0	success
- *				-1	fail(Can't lock data pool lock)
+ *				-1	fail(Can't lock to the data pool lock)
  */
 int data_pool_set_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
 {
 	int ret = -1;
+	bool result = true;
+	uint64_t signals = 0;
 
 	if (data_pool_lock() == true) {
+		signals = data_pool_check_change_v1(data);
 		memcpy(&g_agl_cluster_data_pool.data, data, sizeof(g_agl_cluster_data_pool.data));
 
 		(void) data_pool_unlock();
+
+		if (g_agl_cluster_data_pool.notify != NULL && signals != 0)
+			result = g_agl_cluster_data_pool.notify(signals);
+
+		if (result == false)
+			g_agl_cluster_data_pool.notify = NULL;
 
 		ret = 0;
 	}
@@ -50,7 +63,7 @@ int data_pool_set_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
  *
  * @param [in]	data	Memory to get data pool full size v1 data
  * @return int	0	success
- *				-1	fail(Can't lock data pool lock)
+ *				-1	fail(Can't lock to the data pool lock)
  */
 int data_pool_get_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
 {
@@ -100,6 +113,131 @@ bool data_pool_unlock(void)
 	return result;
 }
 
+/**
+ * Get a data pool data.by full size v1 data.
+ *
+ * @param [in]	func	Pointer of callback function for data pool change notify
+ * @return int	true	success
+ *				false	Already registered
+ */
+bool data_pool_register_change_notify(change_notify_function_t func)
+{
+	if (g_agl_cluster_data_pool.notify != NULL && func != NULL)
+		return false;
+
+	g_agl_cluster_data_pool.notify = func;
+
+	return true;
+}
+
+uint64_t data_pool_check_change_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
+{
+	uint64_t signals = 0;
+
+	if (data->turnR != g_agl_cluster_data_pool.data.turnR)
+		signals |= IC_HMI_TT_TURN_R;
+
+	if (data->turnL != g_agl_cluster_data_pool.data.turnL)
+		signals |= IC_HMI_TT_TURN_L;
+
+	if (data->brake != g_agl_cluster_data_pool.data.brake)
+		signals |= IC_HMI_TT_BRAKE;
+
+	if (data->seatbelt != g_agl_cluster_data_pool.data.seatbelt)
+		signals |= IC_HMI_TT_SEATBELT;
+
+	if (data->highbeam != g_agl_cluster_data_pool.data.highbeam)
+		signals |= IC_HMI_TT_HIGHBEAM;
+
+	if (data->door != g_agl_cluster_data_pool.data.door)
+		signals |= IC_HMI_TT_DOOR;
+
+	if (data->eps != g_agl_cluster_data_pool.data.eps)
+		signals |= IC_HMI_TT_EPS;
+
+	if (data->srsAirbag != g_agl_cluster_data_pool.data.srsAirbag)
+		signals |= IC_HMI_TT_SRS_AIRBAG;
+
+	if (data->abs != g_agl_cluster_data_pool.data.abs)
+		signals |= IC_HMI_TT_ABS;
+
+	if (data->lowBattery != g_agl_cluster_data_pool.data.lowBattery)
+		signals |= IC_HMI_TT_LOW_BATTERY;
+
+	if (data->oilPress != g_agl_cluster_data_pool.data.oilPress)
+		signals |= IC_HMI_TT_OIL_PRESS;
+
+	if (data->engine != g_agl_cluster_data_pool.data.engine)
+		signals |= IC_HMI_TT_ENGINE;
+
+	if (data->fuel != g_agl_cluster_data_pool.data.fuel)
+		signals |= IC_HMI_TT_FUEL;
+
+	if (data->immobi != g_agl_cluster_data_pool.data.immobi)
+		signals |= IC_HMI_TT_IMMOBI;
+
+	if (data->tmFail != g_agl_cluster_data_pool.data.tmFail)
+		signals |= IC_HMI_TT_TM_FAIL;
+
+	if (data->espAct != g_agl_cluster_data_pool.data.espAct)
+		signals |= IC_HMI_TT_ESP_ACT;
+
+	if (data->espOff != g_agl_cluster_data_pool.data.espOff)
+		signals |= IC_HMI_TT_ESP_OFF;
+
+	if (data->adaptingLighting != g_agl_cluster_data_pool.data.adaptingLighting)
+		signals |= IC_HMI_TT_ADAPTING_LIGHTING;
+
+	if (data->autoStop != g_agl_cluster_data_pool.data.autoStop)
+		signals |= IC_HMI_TT_AUTO_STOP;
+
+	if (data->autoStopFail != g_agl_cluster_data_pool.data.autoStopFail)
+		signals |= IC_HMI_TT_AUTO_STOP_FAIL;
+
+	if (data->parkingLights != g_agl_cluster_data_pool.data.parkingLights)
+		signals |= IC_HMI_TT_PARKING_LIGHTS;
+
+	if (data->frontFog != g_agl_cluster_data_pool.data.frontFog)
+		signals |= IC_HMI_TT_FRONT_FOG;
+
+	if (data->exteriorLightFault != g_agl_cluster_data_pool.data.exteriorLightFault)
+		signals |= IC_HMI_TT_EXTERIOR_LIGHT_FAULT;
+
+	if (data->accFail != g_agl_cluster_data_pool.data.accFail)
+		signals |= IC_HMI_TT_ACC_FAIL;
+
+	if (data->ldwOff != g_agl_cluster_data_pool.data.ldwOff)
+		signals |= IC_HMI_TT_LDW_OFF;
+
+	if (data->hillDescent != g_agl_cluster_data_pool.data.hillDescent)
+		signals |= IC_HMI_TT_HILL_DESCENT;
+
+	if (data->autoHiBeamGreen != g_agl_cluster_data_pool.data.autoHiBeamGreen)
+		signals |= IC_HMI_TT_AUTO_HI_BEAM_GREEN;
+
+	if (data->autoHiBeamAmber != g_agl_cluster_data_pool.data.autoHiBeamAmber)
+		signals |= IC_HMI_TT_AUTO_HI_BEAM_AMBER;
+
+	if (data->ldwOperate != g_agl_cluster_data_pool.data.ldwOperate)
+		signals |= IC_HMI_TT_LDW_OPERATE;
+
+	if (data->generalWarn != g_agl_cluster_data_pool.data.generalWarn)
+		signals |= IC_HMI_TT_GENERAL_WARN;
+
+	if (data->sportsMode != g_agl_cluster_data_pool.data.sportsMode)
+		signals |= IC_HMI_TT_SPORTS_MODE;
+
+	if (data->drivingPowerMode != g_agl_cluster_data_pool.data.drivingPowerMode)
+		signals |= IC_HMI_TT_DRIVING_POWER_MODE;
+
+	if (data->hotTemp != g_agl_cluster_data_pool.data.hotTemp)
+		signals |= IC_HMI_TT_HOT_TEMP;
+
+	if (data->lowTemp != g_agl_cluster_data_pool.data.lowTemp)
+		signals |= IC_HMI_TT_LOW_TEMP;
+
+	return signals;
+}
 
 /**
  *  ====== Telltale =======================================

@@ -13,6 +13,10 @@
 
 #include "data-pool-storage.h"
 
+typedef bool (*change_notify_function_t)(uint64_t signals);
+
+bool data_pool_register_change_notify(change_notify_function_t func);
+
 /**
  *  ====== Telltale =======================================
  */

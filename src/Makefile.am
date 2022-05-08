@@ -1,50 +1,30 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
-bin_PROGRAMS = cluster_service ms_client
+bin_PROGRAMS = cluster_service 
 
 cluster_service_SOURCES = \
-		data-pool-service.c \
-		cluster-service.c 
+	data-pool-service.c \
+	cluster-service.c \
+	demo-data-generator.c
 
 # options
 # Additional library
 cluster_service_LDADD = \
-		$(top_srcdir)/lib/libcluster_service_common.a \
-		-lrt -lpthread \
-		@LIBSYSTEMD_LIBS@ 
-		
+	$(top_srcdir)/lib/libcluster_service_common.a \
+	-lrt -lpthread \
+	@LIBSYSTEMD_LIBS@ 
+
 # C compiler options
 cluster_service_CFLAGS = \
-		-g \
-		-I$(top_srcdir)/lib \
-		-I$(top_srcdir)/include \
-		@LIBSYSTEMD_CFLAGS@ \
-		-D_GNU_SOURCE
+	-g \
+	-I$(top_srcdir)/lib \
+	-I$(top_srcdir)/include \
+	@LIBSYSTEMD_CFLAGS@ \
+	-D_GNU_SOURCE
 
 # Linker options
 cluster_service_LDFLAGS = 
-
-
-
-ms_client_SOURCES = \
-		ms_client.c 
-
-# options
-# Additional library
-ms_client_LDADD = \
-		-lrt -lpthread \
-		@LIBSYSTEMD_LIBS@
-
-# C compiler options
-ms_client_CFLAGS = \
-		-g \
-		-I$(top_srcdir)/include \
-		@LIBSYSTEMD_CFLAGS@ \
-		-D_GNU_SOURCE
-
-# Linker options
-ms_client_LDFLAGS = 
 
 
 # configure option 

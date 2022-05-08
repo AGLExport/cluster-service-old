@@ -19,6 +19,7 @@ libcluster_service_common_a_CFLAGS = \
 
 libcluster_service_client_a_SOURCES = \
 	data-pool-client.c \
+	cluster-api-core.c \
 	cluster-api-sdevent.c 
 
 libcluster_service_client_a_CFLAGS = \

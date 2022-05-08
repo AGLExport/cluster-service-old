@@ -62,7 +62,5 @@ int data_pool_receive(int fd)
 		ret = -1;
 	}
 
-	fprintf(stderr, "rcv size = %ld (req: %ld) seqnum=%lx\n", sret, sizeof(packet), packet.header.seqnum);
-
 	return ret;
 }

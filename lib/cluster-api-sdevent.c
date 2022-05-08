@@ -6,6 +6,7 @@
  */
 
 #include "cluster-api-sdevent.h"
+#include "cluster_api.h"
 #include "data-pool-client.h"
 #include "data-pool-static-configurator.h"
 
@@ -135,6 +136,7 @@ int data_pool_client_setup_sdevent(sd_event *event, data_pool_client_handle_sdev
 
 	dp->socket_evsource = socket_source;
 
+	clusterInit();
 	(*handle) = dp;
 
 	return 0;
@@ -161,6 +163,8 @@ int data_pool_client_cleanup_sdevent(data_pool_client_handle_sdevent handle)
 	// NULL through
 	if (handle == NULL)
 		return 0;
+
+	clusterTerm();
 
 	(void) sd_event_source_disable_unref(dp->socket_evsource);
 

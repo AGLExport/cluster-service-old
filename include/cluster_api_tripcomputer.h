@@ -54,7 +54,7 @@ uint8_t getMinuteAVal(void);
 uint8_t getMinuteBVal(void);
 uint8_t getSecondAVal(void);
 uint8_t getSecondBVal(void);
-uint16_t getOTempVal(void);
+int16_t getOTempVal(void);
 IC_HMI_OTEMP_UNIT_VAL getOTempUnitVal(void);
 uint16_t getCruRangeVal(void);
 uint16_t getAvgFuelAVal(void);

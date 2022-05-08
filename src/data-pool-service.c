@@ -26,11 +26,18 @@ struct s_data_pool_session {
 	sd_event_source *socket_evsource; /**< UNIX Domain socket event source for data pool service */
 };
 
+/** data pool service notification timer */
+struct s_data_pool_notification_timer {
+	sd_event_source *timer_evsource; /**< Timer event source for data pool service  */
+	uint64_t timerval;		 /**< Timer counter */
+};
+
 /** data pool service handles */
 struct s_data_pool_service {
 	sd_event *parent_eventloop;	  /**< UNIX Domain socket event source for data pool service */
 	sd_event_source *socket_evsource; /**< UNIX Domain socket event source for data pool service */
-	sd_event_source *timer_evsource;  /**< Timer event source for data pool service  */
+	struct s_data_pool_notification_timer
+		*notification_timer;		  /**< Notification timer for data pool service  */
 	struct s_data_pool_session *session_list; /**< Data pool client sessions list */
 };
 typedef struct s_data_pool_service *data_pool_service_handle;
@@ -248,18 +255,23 @@ error_return:
 }
 
 #ifndef UNIT_TEST
-static uint64_t timerval = 0;
-int g_count = 0;
+/**
+ * TImer handler for data pool passenger
+ *
+ * @param [in]	es	sd event source
+ * @param [in]	usec	callback time (MONOTONIC time)
+ * @param [in]	userdata	Pointer to data_pool_service_handle
+ * @return int	 0 success
+ *				-1 internal error (timer stop)
+ */
 static int timer_handler(sd_event_source *es, uint64_t usec, void *userdata)
 {
 	data_pool_service_handle dp = (data_pool_service_handle) userdata;
 	int ret = -1;
 
-	if ((usec - timerval) > 10) {
-		fprintf(stderr, "timer event sch=%ld  real=%ld\n", timerval, usec);
-	}
-	timerval = timerval + 10 * 1000;
-	ret = sd_event_source_set_time(es, timerval);
+	dp->notification_timer->timerval = dp->notification_timer->timerval +
+		get_data_pool_notification_interval();
+	ret = sd_event_source_set_time(es, dp->notification_timer->timerval);
 	if (ret < 0) {
 		return -1;
 	}
@@ -284,6 +296,7 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	sd_event_source *timer_source = NULL;
 	struct sockaddr_un name;
 	struct s_data_pool_service *dp = NULL;
+	uint64_t timerval = 0;
 	int sasize = -1;
 	int fd = -1;
 	int ret = -1;
@@ -312,6 +325,16 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 	}
 
 	memset(dp, 0, sizeof(*dp));
+
+	dp->notification_timer = (struct s_data_pool_notification_timer *) malloc(
+		sizeof(struct s_data_pool_notification_timer));
+	if (dp->notification_timer == NULL) {
+		ret = -1;
+		goto err_return;
+	}
+
+	memset(dp->notification_timer, 0, sizeof(*dp->notification_timer));
+
 
 	dp->parent_eventloop = event;
 
@@ -359,13 +382,17 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 
 	// Notification timer setup
 	ret = sd_event_now(event, CLOCK_MONOTONIC, &timerval);
-	timerval = timerval + 1 * 1000 * 1000;
+	if (ret < 0) {
+		ret = -1;
+		goto err_return;
+	}
+	dp->notification_timer->timerval = timerval + get_data_pool_notification_interval();
 	ret = sd_event_add_time(
 		event,
 		&timer_source,
 		CLOCK_MONOTONIC,
-		timerval, // triger time (usec)
-		1 * 1000, // accuracy (1000usec)
+		dp->notification_timer->timerval, // triger time (usec)
+		1 * 1000,			  // accuracy (1000usec)
 		timer_handler,
 		dp);
 	if (ret < 0) {
@@ -373,7 +400,7 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 		goto err_return;
 	}
 
-	dp->timer_evsource = timer_source;
+	dp->notification_timer->timer_evsource = timer_source;
 
 	ret = sd_event_source_set_enabled(timer_source, SD_EVENT_ON);
 	if (ret < 0) {
@@ -388,6 +415,8 @@ int data_pool_service_setup(sd_event *event, data_pool_service_handle *handle)
 err_return:
 	timer_source = sd_event_source_disable_unref(timer_source);
 	socket_source = sd_event_source_disable_unref(socket_source);
+	if (dp != NULL)
+		free(dp->notification_timer);
 	free(dp);
 	if (fd != -1)
 		close(fd);
@@ -424,9 +453,9 @@ int data_pool_service_cleanup(data_pool_service_handle handle)
 		}
 	}
 
-	(void) sd_event_source_disable_unref(dp->timer_evsource);
+	(void) sd_event_source_disable_unref(dp->notification_timer->timer_evsource);
 	(void) sd_event_source_disable_unref(dp->socket_evsource);
-
+	free(dp->notification_timer);
 	free(dp);
 
 	return 0;

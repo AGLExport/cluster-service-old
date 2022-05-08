@@ -8,6 +8,8 @@
 #include "cluster-service-util.h"
 #include "data-pool-service.h"
 
+#include "demo-data-generator.h"
+
 #include <stdlib.h>
 #include <systemd/sd-daemon.h>
 #include <systemd/sd-event.h>
@@ -33,6 +35,8 @@ int main(int argc, char *argv[])
 	if (ret < 0)
 		goto finish;
 
+	(void) demo_data_generator_setup(event);
+
 	ret = data_pool_service_setup(event, &handle);
 
 	(void) sd_notify(
@@ -43,6 +47,7 @@ int main(int argc, char *argv[])
 
 finish:
 	(void) data_pool_service_cleanup(handle);
+	(void) demo_data_generator_cleanup();
 	event = sd_event_unref(event);
 
 	return ret < 0 ? EXIT_FAILURE : EXIT_SUCCESS;

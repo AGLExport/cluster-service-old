@@ -30,7 +30,7 @@ struct s_data_pool_service_configure {
 typedef struct s_data_pool_service_configure data_pool_service_staticconfig;
 
 static const struct s_data_pool_service_configure g_config = {
-	.notification_interval = (500 * 1000),	  // usec
+	.notification_interval = (16 * 1000),	  // usec
 	.data_pool_service_session_limit = (100), // counts
 
 	.socket_name = "\0/agl/agl-cluster-service",
