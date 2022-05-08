@@ -19,6 +19,13 @@ AC_ARG_ENABLE([address-sanitizer],
   [enable_address_sanitizer])
 AM_CONDITIONAL([ENABLE_ADDRESS_SANITIZER], [test "$enable_address_sanitizer" = "yes"])
 
+AC_ARG_ENABLE([gcov],
+  [AS_HELP_STRING([--enable-gcov], [Enable gcov in build time (for debug, default is no)])],
+  [:],
+  [enable_gcov])
+AM_CONDITIONAL([ENABLE_GCOV], [test "$enable_gcov" = "yes"])
+
+
 AC_ARG_ENABLE([printfdebug],
   [AS_HELP_STRING([--enable-printfdebug], [Enable user printf debug (default is no)])],
   [:],

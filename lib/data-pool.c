@@ -248,7 +248,7 @@ uint64_t data_pool_check_change_v1(struct S_AGLCLUSTER_SERVICE_DATA_V1 *data)
  * @param [in]	val		ON/OFF for Turn R Telltale
  * @return void
  */
-void data_pool_set_turn_r(IC_HMI_ON_OFF val)
+void data_pool_set_turn_r(int32_t val)
 {
 	g_agl_cluster_data_pool.data.turnR = val;
 }
@@ -256,10 +256,10 @@ void data_pool_set_turn_r(IC_HMI_ON_OFF val)
  * Data pool getter for Turn R
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_turn_r(void)
+int32_t data_pool_get_turn_r(void)
 {
 	return g_agl_cluster_data_pool.data.turnR;
 }
@@ -270,7 +270,7 @@ IC_HMI_ON_OFF data_pool_get_turn_r(void)
  * @param [in]	val		ON/OFF for Turn L Telltale
  * @return void
  */
-void data_pool_set_turn_l(IC_HMI_ON_OFF val)
+void data_pool_set_turn_l(int32_t val)
 {
 	g_agl_cluster_data_pool.data.turnL = val;
 }
@@ -278,10 +278,10 @@ void data_pool_set_turn_l(IC_HMI_ON_OFF val)
  * Data pool getter for Turn L
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_turn_l(void)
+int32_t data_pool_get_turn_l(void)
 {
 	return g_agl_cluster_data_pool.data.turnL;
 }
@@ -292,7 +292,7 @@ IC_HMI_ON_OFF data_pool_get_turn_l(void)
  * @param [in]	val		ON/OFF for Brake Telltale
  * @return void
  */
-void data_pool_set_brake(IC_HMI_ON_OFF val)
+void data_pool_set_brake(int32_t val)
 {
 	g_agl_cluster_data_pool.data.brake = val;
 }
@@ -300,10 +300,10 @@ void data_pool_set_brake(IC_HMI_ON_OFF val)
  * Data pool getter for Brake
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_brake(void)
+int32_t data_pool_get_brake(void)
 {
 	return g_agl_cluster_data_pool.data.brake;
 }
@@ -314,7 +314,7 @@ IC_HMI_ON_OFF data_pool_get_brake(void)
  * @param [in]	val		ON/OFF for Seatbelt Telltale
  * @return void
  */
-void data_pool_set_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.seatbelt = val;
 }
@@ -322,10 +322,10 @@ void data_pool_set_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_seatbelt(void)
+int32_t data_pool_get_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.seatbelt;
 }
@@ -336,7 +336,7 @@ IC_HMI_ON_OFF data_pool_get_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Front Right Telltale
  * @return void
  */
-void data_pool_set_front_right_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_front_right_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.frontRightSeatbelt = val;
 }
@@ -344,10 +344,10 @@ void data_pool_set_front_right_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Front Right
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_front_right_seatbelt(void)
+int32_t data_pool_get_front_right_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.frontRightSeatbelt;
 }
@@ -358,7 +358,7 @@ IC_HMI_ON_OFF data_pool_get_front_right_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Front Center Telltale
  * @return void
  */
-void data_pool_set_front_center_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_front_center_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.frontCenterSeatbelt = val;
 }
@@ -366,10 +366,10 @@ void data_pool_set_front_center_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Front Center
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_front_center_seatbelt(void)
+int32_t data_pool_get_front_center_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.frontCenterSeatbelt;
 }
@@ -380,7 +380,7 @@ IC_HMI_ON_OFF data_pool_get_front_center_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Front Left Telltale
  * @return void
  */
-void data_pool_set_front_left_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_front_left_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.frontLeftSeatbelt = val;
 }
@@ -388,10 +388,10 @@ void data_pool_set_front_left_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Front Left
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_front_left_seatbelt(void)
+int32_t data_pool_get_front_left_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.frontLeftSeatbelt;
 }
@@ -402,7 +402,7 @@ IC_HMI_ON_OFF data_pool_get_front_left_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Mid1 Right Telltale
  * @return void
  */
-void data_pool_set_mid1_right_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_mid1_right_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.mid1RightSeatbelt = val;
 }
@@ -410,10 +410,10 @@ void data_pool_set_mid1_right_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Mid1 Right
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_mid1_right_seatbelt(void)
+int32_t data_pool_get_mid1_right_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.mid1RightSeatbelt;
 }
@@ -424,7 +424,7 @@ IC_HMI_ON_OFF data_pool_get_mid1_right_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Mid1 Center Telltale
  * @return void
  */
-void data_pool_set_mid1_center_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_mid1_center_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.mid1CenterSeatbelt = val;
 }
@@ -432,10 +432,10 @@ void data_pool_set_mid1_center_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Mid1 Center
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_mid1_center_seatbelt(void)
+int32_t data_pool_get_mid1_center_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.mid1CenterSeatbelt;
 }
@@ -446,7 +446,7 @@ IC_HMI_ON_OFF data_pool_get_mid1_center_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Mid1 Left Telltale
  * @return void
  */
-void data_pool_set_mid1_left_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_mid1_left_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.mid1LeftSeatbelt = val;
 }
@@ -454,10 +454,10 @@ void data_pool_set_mid1_left_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Mid1 Left
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_mid1_left_seatbelt(void)
+int32_t data_pool_get_mid1_left_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.mid1LeftSeatbelt;
 }
@@ -468,7 +468,7 @@ IC_HMI_ON_OFF data_pool_get_mid1_left_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Mid2 Right Telltale
  * @return void
  */
-void data_pool_set_mid2_right_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_mid2_right_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.mid2RightSeatbelt = val;
 }
@@ -476,10 +476,10 @@ void data_pool_set_mid2_right_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Mid2 Right
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_mid2_right_seatbelt(void)
+int32_t data_pool_get_mid2_right_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.mid2RightSeatbelt;
 }
@@ -490,7 +490,7 @@ IC_HMI_ON_OFF data_pool_get_mid2_right_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Mid2 Center Telltale
  * @return void
  */
-void data_pool_set_mid2_center_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_mid2_center_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.mid2CenterSeatbelt = val;
 }
@@ -498,10 +498,10 @@ void data_pool_set_mid2_center_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Mid2 Center
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_mid2_center_seatbelt(void)
+int32_t data_pool_get_mid2_center_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.mid2CenterSeatbelt;
 }
@@ -512,7 +512,7 @@ IC_HMI_ON_OFF data_pool_get_mid2_center_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Mid2 Left Telltale
  * @return void
  */
-void data_pool_set_mid2_left_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_mid2_left_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.mid2LeftSeatbelt = val;
 }
@@ -520,10 +520,10 @@ void data_pool_set_mid2_left_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Mid2 Left
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_mid2_left_seatbelt(void)
+int32_t data_pool_get_mid2_left_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.mid2LeftSeatbelt;
 }
@@ -534,7 +534,7 @@ IC_HMI_ON_OFF data_pool_get_mid2_left_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Rear Right Telltale
  * @return void
  */
-void data_pool_set_rear_right_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_rear_right_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.rearRightSeatbelt = val;
 }
@@ -542,10 +542,10 @@ void data_pool_set_rear_right_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Rear Right
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_rear_right_seatbelt(void)
+int32_t data_pool_get_rear_right_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.rearRightSeatbelt;
 }
@@ -556,7 +556,7 @@ IC_HMI_ON_OFF data_pool_get_rear_right_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Rear Center Telltale
  * @return void
  */
-void data_pool_set_rear_center_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_rear_center_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.rearCenterSeatbelt = val;
 }
@@ -564,10 +564,10 @@ void data_pool_set_rear_center_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Rear Center
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_rear_center_seatbelt(void)
+int32_t data_pool_get_rear_center_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.rearCenterSeatbelt;
 }
@@ -578,7 +578,7 @@ IC_HMI_ON_OFF data_pool_get_rear_center_seatbelt(void)
  * @param [in]	val		ON/OFF for Seatbelt at Rear Left Telltale
  * @return void
  */
-void data_pool_set_rear_left_seatbelt(IC_HMI_ON_OFF val)
+void data_pool_set_rear_left_seatbelt(int32_t val)
 {
 	g_agl_cluster_data_pool.data.rearLeftSeatbelt = val;
 }
@@ -586,10 +586,10 @@ void data_pool_set_rear_left_seatbelt(IC_HMI_ON_OFF val)
  * Data pool getter for Seatbelt at Rear Left
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_rear_left_seatbelt(void)
+int32_t data_pool_get_rear_left_seatbelt(void)
 {
 	return g_agl_cluster_data_pool.data.rearLeftSeatbelt;
 }
@@ -600,7 +600,7 @@ IC_HMI_ON_OFF data_pool_get_rear_left_seatbelt(void)
  * @param [in]	val		ON/OFF for High Beam Telltale
  * @return void
  */
-void data_pool_set_high_beam(IC_HMI_ON_OFF val)
+void data_pool_set_high_beam(int32_t val)
 {
 	g_agl_cluster_data_pool.data.highbeam = val;
 }
@@ -608,10 +608,10 @@ void data_pool_set_high_beam(IC_HMI_ON_OFF val)
  * Data pool getter for High Beam
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_high_beam(void)
+int32_t data_pool_get_high_beam(void)
 {
 	return g_agl_cluster_data_pool.data.highbeam;
 }
@@ -622,7 +622,7 @@ IC_HMI_ON_OFF data_pool_get_high_beam(void)
  * @param [in]	val		ON/OFF for Door Telltale
  * @return void
  */
-void data_pool_set_door(IC_HMI_ON_OFF val)
+void data_pool_set_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.door = val;
 }
@@ -630,10 +630,10 @@ void data_pool_set_door(IC_HMI_ON_OFF val)
  * Data pool getter for Door
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_door(void)
+int32_t data_pool_get_door(void)
 {
 	return g_agl_cluster_data_pool.data.door;
 }
@@ -644,7 +644,7 @@ IC_HMI_ON_OFF data_pool_get_door(void)
  * @param [in]	val		ON/OFF for Door at Front Right Telltale
  * @return void
  */
-void data_pool_set_front_right_door(IC_HMI_ON_OFF val)
+void data_pool_set_front_right_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.frontRightDoor = val;
 }
@@ -652,10 +652,10 @@ void data_pool_set_front_right_door(IC_HMI_ON_OFF val)
  * Data pool getter for Door at Front Right
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_front_right_door(void)
+int32_t data_pool_get_front_right_door(void)
 {
 	return g_agl_cluster_data_pool.data.frontRightDoor;
 }
@@ -666,7 +666,7 @@ IC_HMI_ON_OFF data_pool_get_front_right_door(void)
  * @param [in]	val		ON/OFF for Door at Front Left Telltale
  * @return void
  */
-void data_pool_set_front_left_door(IC_HMI_ON_OFF val)
+void data_pool_set_front_left_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.frontLeftDoor = val;
 }
@@ -674,10 +674,10 @@ void data_pool_set_front_left_door(IC_HMI_ON_OFF val)
  * Data pool getter for Door at Front Left
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_front_left_door(void)
+int32_t data_pool_get_front_left_door(void)
 {
 	return g_agl_cluster_data_pool.data.frontLeftDoor;
 }
@@ -688,7 +688,7 @@ IC_HMI_ON_OFF data_pool_get_front_left_door(void)
  * @param [in]	val		ON/OFF for Door at Rear Right Telltale
  * @return void
  */
-void data_pool_set_rear_right_door(IC_HMI_ON_OFF val)
+void data_pool_set_rear_right_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.rearRightDoor = val;
 }
@@ -696,10 +696,10 @@ void data_pool_set_rear_right_door(IC_HMI_ON_OFF val)
  * Data pool getter for Door at Rear Right
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_rear_right_door(void)
+int32_t data_pool_get_rear_right_door(void)
 {
 	return g_agl_cluster_data_pool.data.rearRightDoor;
 }
@@ -710,7 +710,7 @@ IC_HMI_ON_OFF data_pool_get_rear_right_door(void)
  * @param [in]	val		ON/OFF for Door at Rear Left Telltale
  * @return void
  */
-void data_pool_set_rear_left_door(IC_HMI_ON_OFF val)
+void data_pool_set_rear_left_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.rearLeftDoor = val;
 }
@@ -718,10 +718,10 @@ void data_pool_set_rear_left_door(IC_HMI_ON_OFF val)
  * Data pool getter for Door at Rear Left
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_rear_left_door(void)
+int32_t data_pool_get_rear_left_door(void)
 {
 	return g_agl_cluster_data_pool.data.rearLeftDoor;
 }
@@ -732,7 +732,7 @@ IC_HMI_ON_OFF data_pool_get_rear_left_door(void)
  * @param [in]	val		ON/OFF for Trunk Door Telltale
  * @return void
  */
-void data_pool_set_trunk_door(IC_HMI_ON_OFF val)
+void data_pool_set_trunk_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.trunkDoor = val;
 }
@@ -740,10 +740,10 @@ void data_pool_set_trunk_door(IC_HMI_ON_OFF val)
  * Data pool getter for Trunk Door
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_trunk_door(void)
+int32_t data_pool_get_trunk_door(void)
 {
 	return g_agl_cluster_data_pool.data.trunkDoor;
 }
@@ -754,7 +754,7 @@ IC_HMI_ON_OFF data_pool_get_trunk_door(void)
  * @param [in]	val		ON/OFF for Hood Door Telltale
  * @return void
  */
-void data_pool_set_hood_door(IC_HMI_ON_OFF val)
+void data_pool_set_hood_door(int32_t val)
 {
 	g_agl_cluster_data_pool.data.hoodDoor = val;
 }
@@ -762,10 +762,10 @@ void data_pool_set_hood_door(IC_HMI_ON_OFF val)
  * Data pool getter for Hood Door
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_hood_door(void)
+int32_t data_pool_get_hood_door(void)
 {
 	return g_agl_cluster_data_pool.data.hoodDoor;
 }
@@ -776,7 +776,7 @@ IC_HMI_ON_OFF data_pool_get_hood_door(void)
  * @param [in]	val		ON/OFF for Eps Telltale
  * @return void
  */
-void data_pool_set_eps(IC_HMI_ON_OFF val)
+void data_pool_set_eps(int32_t val)
 {
 	g_agl_cluster_data_pool.data.eps = val;
 }
@@ -784,10 +784,10 @@ void data_pool_set_eps(IC_HMI_ON_OFF val)
  * Data pool getter for Eps
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_eps(void)
+int32_t data_pool_get_eps(void)
 {
 	return g_agl_cluster_data_pool.data.eps;
 }
@@ -798,7 +798,7 @@ IC_HMI_ON_OFF data_pool_get_eps(void)
  * @param [in]	val		ON/OFF for Srs Airbag Telltale
  * @return void
  */
-void data_pool_set_srs_airbag(IC_HMI_ON_OFF val)
+void data_pool_set_srs_airbag(int32_t val)
 {
 	g_agl_cluster_data_pool.data.srsAirbag = val;
 }
@@ -806,10 +806,10 @@ void data_pool_set_srs_airbag(IC_HMI_ON_OFF val)
  * Data pool getter for Srs Airbag
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_srs_airbag(void)
+int32_t data_pool_get_srs_airbag(void)
 {
 	return g_agl_cluster_data_pool.data.srsAirbag;
 }
@@ -820,7 +820,7 @@ IC_HMI_ON_OFF data_pool_get_srs_airbag(void)
  * @param [in]	val		ON/OFF for ABS Telltale
  * @return void
  */
-void data_pool_set_abs(IC_HMI_ON_OFF val)
+void data_pool_set_abs(int32_t val)
 {
 	g_agl_cluster_data_pool.data.abs = val;
 }
@@ -828,10 +828,10 @@ void data_pool_set_abs(IC_HMI_ON_OFF val)
  * Data pool getter for ABS
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_abs(void)
+int32_t data_pool_get_abs(void)
 {
 	return g_agl_cluster_data_pool.data.abs;
 }
@@ -842,7 +842,7 @@ IC_HMI_ON_OFF data_pool_get_abs(void)
  * @param [in]	val		ON/OFF for Low Battery Telltale
  * @return void
  */
-void data_pool_set_low_battery(IC_HMI_ON_OFF val)
+void data_pool_set_low_battery(int32_t val)
 {
 	g_agl_cluster_data_pool.data.lowBattery = val;
 }
@@ -850,10 +850,10 @@ void data_pool_set_low_battery(IC_HMI_ON_OFF val)
  * Data pool getter for Low Battery
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_low_battery(void)
+int32_t data_pool_get_low_battery(void)
 {
 	return g_agl_cluster_data_pool.data.lowBattery;
 }
@@ -864,7 +864,7 @@ IC_HMI_ON_OFF data_pool_get_low_battery(void)
  * @param [in]	val		ON/OFF for Oil Press Telltale
  * @return void
  */
-void data_pool_set_oil_press(IC_HMI_ON_OFF val)
+void data_pool_set_oil_press(int32_t val)
 {
 	g_agl_cluster_data_pool.data.oilPress = val;
 }
@@ -872,10 +872,10 @@ void data_pool_set_oil_press(IC_HMI_ON_OFF val)
  * Data pool getter for Oil Press
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_oil_press(void)
+int32_t data_pool_get_oil_press(void)
 {
 	return g_agl_cluster_data_pool.data.oilPress;
 }
@@ -886,7 +886,7 @@ IC_HMI_ON_OFF data_pool_get_oil_press(void)
  * @param [in]	val		ON/OFF for Engine Telltale
  * @return void
  */
-void data_pool_set_engine(IC_HMI_ON_OFF val)
+void data_pool_set_engine(int32_t val)
 {
 	g_agl_cluster_data_pool.data.engine = val;
 }
@@ -894,10 +894,10 @@ void data_pool_set_engine(IC_HMI_ON_OFF val)
  * Data pool getter for Engine
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_engine(void)
+int32_t data_pool_get_engine(void)
 {
 	return g_agl_cluster_data_pool.data.engine;
 }
@@ -908,7 +908,7 @@ IC_HMI_ON_OFF data_pool_get_engine(void)
  * @param [in]	val		ON/OFF for Fuel Telltale
  * @return void
  */
-void data_pool_set_fuel(IC_HMI_ON_OFF val)
+void data_pool_set_fuel(int32_t val)
 {
 	g_agl_cluster_data_pool.data.fuel = val;
 }
@@ -916,10 +916,10 @@ void data_pool_set_fuel(IC_HMI_ON_OFF val)
  * Data pool getter for Fuel
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_fuel(void)
+int32_t data_pool_get_fuel(void)
 {
 	return g_agl_cluster_data_pool.data.fuel;
 }
@@ -930,7 +930,7 @@ IC_HMI_ON_OFF data_pool_get_fuel(void)
  * @param [in]	val		ON/OFF for Immobi Telltale
  * @return void
  */
-void data_pool_set_immobi(IC_HMI_ON_OFF val)
+void data_pool_set_immobi(int32_t val)
 {
 	g_agl_cluster_data_pool.data.immobi = val;
 }
@@ -938,10 +938,10 @@ void data_pool_set_immobi(IC_HMI_ON_OFF val)
  * Data pool getter for Immobi
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_immobi(void)
+int32_t data_pool_get_immobi(void)
 {
 	return g_agl_cluster_data_pool.data.immobi;
 }
@@ -952,7 +952,7 @@ IC_HMI_ON_OFF data_pool_get_immobi(void)
  * @param [in]	val		ON/OFF for TM Fail Telltale
  * @return void
  */
-void data_pool_set_tm_fail(IC_HMI_ON_OFF val)
+void data_pool_set_tm_fail(int32_t val)
 {
 	g_agl_cluster_data_pool.data.tmFail = val;
 }
@@ -960,10 +960,10 @@ void data_pool_set_tm_fail(IC_HMI_ON_OFF val)
  * Data pool getter for TM Fail
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_tm_fail(void)
+int32_t data_pool_get_tm_fail(void)
 {
 	return g_agl_cluster_data_pool.data.tmFail;
 }
@@ -974,7 +974,7 @@ IC_HMI_ON_OFF data_pool_get_tm_fail(void)
  * @param [in]	val		ON/OFF for Esp Act Telltale
  * @return void
  */
-void data_pool_set_esp_act(IC_HMI_ON_OFF val)
+void data_pool_set_esp_act(int32_t val)
 {
 	g_agl_cluster_data_pool.data.espAct = val;
 }
@@ -982,10 +982,10 @@ void data_pool_set_esp_act(IC_HMI_ON_OFF val)
  * Data pool getter for Esp Act
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_esp_act(void)
+int32_t data_pool_get_esp_act(void)
 {
 	return g_agl_cluster_data_pool.data.espAct;
 }
@@ -996,7 +996,7 @@ IC_HMI_ON_OFF data_pool_get_esp_act(void)
  * @param [in]	val		ON/OFF for Esp Off Telltale
  * @return void
  */
-void data_pool_set_esp_off(IC_HMI_ON_OFF val)
+void data_pool_set_esp_off(int32_t val)
 {
 	g_agl_cluster_data_pool.data.espOff = val;
 }
@@ -1004,10 +1004,10 @@ void data_pool_set_esp_off(IC_HMI_ON_OFF val)
  * Data pool getter for Esp Off
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_esp_off(void)
+int32_t data_pool_get_esp_off(void)
 {
 	return g_agl_cluster_data_pool.data.espOff;
 }
@@ -1018,7 +1018,7 @@ IC_HMI_ON_OFF data_pool_get_esp_off(void)
  * @param [in]	val		ON/OFF for Adapting Lighting Telltale
  * @return void
  */
-void data_pool_set_adapting_lighting(IC_HMI_ON_OFF val)
+void data_pool_set_adapting_lighting(int32_t val)
 {
 	g_agl_cluster_data_pool.data.adaptingLighting = val;
 }
@@ -1026,10 +1026,10 @@ void data_pool_set_adapting_lighting(IC_HMI_ON_OFF val)
  * Data pool getter for Adapting Lighting
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_adapting_lighting(void)
+int32_t data_pool_get_adapting_lighting(void)
 {
 	return g_agl_cluster_data_pool.data.adaptingLighting;
 }
@@ -1040,7 +1040,7 @@ IC_HMI_ON_OFF data_pool_get_adapting_lighting(void)
  * @param [in]	val		ON/OFF for Auto Stop Telltale
  * @return void
  */
-void data_pool_set_auto_stop(IC_HMI_ON_OFF val)
+void data_pool_set_auto_stop(int32_t val)
 {
 	g_agl_cluster_data_pool.data.autoStop = val;
 }
@@ -1048,10 +1048,10 @@ void data_pool_set_auto_stop(IC_HMI_ON_OFF val)
  * Data pool getter for Auto Stop
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_auto_stop(void)
+int32_t data_pool_get_auto_stop(void)
 {
 	return g_agl_cluster_data_pool.data.autoStop;
 }
@@ -1062,7 +1062,7 @@ IC_HMI_ON_OFF data_pool_get_auto_stop(void)
  * @param [in]	val		ON/OFF for Auto Stop Fail Telltale
  * @return void
  */
-void data_pool_set_auto_stop_fail(IC_HMI_ON_OFF val)
+void data_pool_set_auto_stop_fail(int32_t val)
 {
 	g_agl_cluster_data_pool.data.autoStopFail = val;
 }
@@ -1070,10 +1070,10 @@ void data_pool_set_auto_stop_fail(IC_HMI_ON_OFF val)
  * Data pool getter for Auto Stop Fail
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_auto_stop_fail(void)
+int32_t data_pool_get_auto_stop_fail(void)
 {
 	return g_agl_cluster_data_pool.data.autoStopFail;
 }
@@ -1084,7 +1084,7 @@ IC_HMI_ON_OFF data_pool_get_auto_stop_fail(void)
  * @param [in]	val		ON/OFF for Parking Lights Telltale
  * @return void
  */
-void data_pool_set_parking_lights(IC_HMI_ON_OFF val)
+void data_pool_set_parking_lights(int32_t val)
 {
 	g_agl_cluster_data_pool.data.parkingLights = val;
 }
@@ -1092,10 +1092,10 @@ void data_pool_set_parking_lights(IC_HMI_ON_OFF val)
  * Data pool getter for Parking Lights
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_parking_lights(void)
+int32_t data_pool_get_parking_lights(void)
 {
 	return g_agl_cluster_data_pool.data.parkingLights;
 }
@@ -1106,7 +1106,7 @@ IC_HMI_ON_OFF data_pool_get_parking_lights(void)
  * @param [in]	val		ON/OFF for Front Fog Telltale
  * @return void
  */
-void data_pool_set_front_fog(IC_HMI_ON_OFF val)
+void data_pool_set_front_fog(int32_t val)
 {
 	g_agl_cluster_data_pool.data.frontFog = val;
 }
@@ -1114,10 +1114,10 @@ void data_pool_set_front_fog(IC_HMI_ON_OFF val)
  * Data pool getter for Front Fog
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_front_fog(void)
+int32_t data_pool_get_front_fog(void)
 {
 	return g_agl_cluster_data_pool.data.frontFog;
 }
@@ -1128,7 +1128,7 @@ IC_HMI_ON_OFF data_pool_get_front_fog(void)
  * @param [in]	val		ON/OFF for Exterior Light Fault Telltale
  * @return void
  */
-void data_pool_set_exterior_light_fault(IC_HMI_ON_OFF val)
+void data_pool_set_exterior_light_fault(int32_t val)
 {
 	g_agl_cluster_data_pool.data.exteriorLightFault = val;
 }
@@ -1136,10 +1136,10 @@ void data_pool_set_exterior_light_fault(IC_HMI_ON_OFF val)
  * Data pool getter for Exterior Light Fault
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_exterior_light_fault(void)
+int32_t data_pool_get_exterior_light_fault(void)
 {
 	return g_agl_cluster_data_pool.data.exteriorLightFault;
 }
@@ -1150,7 +1150,7 @@ IC_HMI_ON_OFF data_pool_get_exterior_light_fault(void)
  * @param [in]	val		ON/OFF for Acc Fail Telltale
  * @return void
  */
-void data_pool_set_acc_fail(IC_HMI_ON_OFF val)
+void data_pool_set_acc_fail(int32_t val)
 {
 	g_agl_cluster_data_pool.data.accFail = val;
 }
@@ -1158,10 +1158,10 @@ void data_pool_set_acc_fail(IC_HMI_ON_OFF val)
  * Data pool getter for Acc Fail
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_acc_fail(void)
+int32_t data_pool_get_acc_fail(void)
 {
 	return g_agl_cluster_data_pool.data.accFail;
 }
@@ -1172,7 +1172,7 @@ IC_HMI_ON_OFF data_pool_get_acc_fail(void)
  * @param [in]	val		ON/OFF for Ldw Off Telltale
  * @return void
  */
-void data_pool_set_ldw_off(IC_HMI_ON_OFF val)
+void data_pool_set_ldw_off(int32_t val)
 {
 	g_agl_cluster_data_pool.data.ldwOff = val;
 }
@@ -1180,10 +1180,10 @@ void data_pool_set_ldw_off(IC_HMI_ON_OFF val)
  * Data pool getter for Ldw Off
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_ldw_off(void)
+int32_t data_pool_get_ldw_off(void)
 {
 	return g_agl_cluster_data_pool.data.ldwOff;
 }
@@ -1194,7 +1194,7 @@ IC_HMI_ON_OFF data_pool_get_ldw_off(void)
  * @param [in]	val		ON/OFF for Hill Descent Telltale
  * @return void
  */
-void data_pool_set_hill_descent(IC_HMI_ON_OFF val)
+void data_pool_set_hill_descent(int32_t val)
 {
 	g_agl_cluster_data_pool.data.hillDescent = val;
 }
@@ -1202,10 +1202,10 @@ void data_pool_set_hill_descent(IC_HMI_ON_OFF val)
  * Data pool getter for Hill Descent
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_hill_descent(void)
+int32_t data_pool_get_hill_descent(void)
 {
 	return g_agl_cluster_data_pool.data.hillDescent;
 }
@@ -1216,7 +1216,7 @@ IC_HMI_ON_OFF data_pool_get_hill_descent(void)
  * @param [in]	val		ON/OFF for Auto Hi Beam Green Telltale
  * @return void
  */
-void data_pool_set_auto_hi_beam_green(IC_HMI_ON_OFF val)
+void data_pool_set_auto_hi_beam_green(int32_t val)
 {
 	g_agl_cluster_data_pool.data.autoHiBeamGreen = val;
 }
@@ -1224,10 +1224,10 @@ void data_pool_set_auto_hi_beam_green(IC_HMI_ON_OFF val)
  * Data pool getter for Auto Hi Beam Green
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_auto_hi_beam_green(void)
+int32_t data_pool_get_auto_hi_beam_green(void)
 {
 	return g_agl_cluster_data_pool.data.autoHiBeamGreen;
 }
@@ -1238,7 +1238,7 @@ IC_HMI_ON_OFF data_pool_get_auto_hi_beam_green(void)
  * @param [in]	val		ON/OFF for Auto Hi Beam Amber Telltale
  * @return void
  */
-void data_pool_set_auto_hi_beam_amber(IC_HMI_ON_OFF val)
+void data_pool_set_auto_hi_beam_amber(int32_t val)
 {
 	g_agl_cluster_data_pool.data.autoHiBeamAmber = val;
 }
@@ -1246,10 +1246,10 @@ void data_pool_set_auto_hi_beam_amber(IC_HMI_ON_OFF val)
  * Data pool getter for Auto Hi Beam Amber
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_auto_hi_beam_amber(void)
+int32_t data_pool_get_auto_hi_beam_amber(void)
 {
 	return g_agl_cluster_data_pool.data.autoHiBeamAmber;
 }
@@ -1260,7 +1260,7 @@ IC_HMI_ON_OFF data_pool_get_auto_hi_beam_amber(void)
  * @param [in]	val		ON/OFF for Sports Mode Telltale
  * @return void
  */
-void data_pool_set_sports_mode(IC_HMI_ON_OFF val)
+void data_pool_set_sports_mode(int32_t val)
 {
 	g_agl_cluster_data_pool.data.sportsMode = val;
 }
@@ -1268,10 +1268,10 @@ void data_pool_set_sports_mode(IC_HMI_ON_OFF val)
  * Data pool getter for Sports Mode
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_sports_mode(void)
+int32_t data_pool_get_sports_mode(void)
 {
 	return g_agl_cluster_data_pool.data.sportsMode;
 }
@@ -1282,7 +1282,7 @@ IC_HMI_ON_OFF data_pool_get_sports_mode(void)
  * @param [in]	val		ON/OFF for Ldw Operate Telltale
  * @return void
  */
-void data_pool_set_ldw_operate(IC_HMI_ON_OFF val)
+void data_pool_set_ldw_operate(int32_t val)
 {
 	g_agl_cluster_data_pool.data.ldwOperate = val;
 }
@@ -1290,10 +1290,10 @@ void data_pool_set_ldw_operate(IC_HMI_ON_OFF val)
  * Data pool getter for Ldw Operate
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_ldw_operate(void)
+int32_t data_pool_get_ldw_operate(void)
 {
 	return g_agl_cluster_data_pool.data.ldwOperate;
 }
@@ -1304,7 +1304,7 @@ IC_HMI_ON_OFF data_pool_get_ldw_operate(void)
  * @param [in]	val		ON/OFF for General Warn Telltale
  * @return void
  */
-void data_pool_set_general_warn(IC_HMI_ON_OFF val)
+void data_pool_set_general_warn(int32_t val)
 {
 	g_agl_cluster_data_pool.data.generalWarn = val;
 }
@@ -1312,10 +1312,10 @@ void data_pool_set_general_warn(IC_HMI_ON_OFF val)
  * Data pool getter for General Warn
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_general_warn(void)
+int32_t data_pool_get_general_warn(void)
 {
 	return g_agl_cluster_data_pool.data.generalWarn;
 }
@@ -1326,7 +1326,7 @@ IC_HMI_ON_OFF data_pool_get_general_warn(void)
  * @param [in]	val		ON/OFF for Driver Power Mode Telltale
  * @return void
  */
-void data_pool_set_driving_power_mode(IC_HMI_ON_OFF val)
+void data_pool_set_driving_power_mode(int32_t val)
 {
 	g_agl_cluster_data_pool.data.drivingPowerMode = val;
 }
@@ -1334,10 +1334,10 @@ void data_pool_set_driving_power_mode(IC_HMI_ON_OFF val)
  * Data pool getter for Driver Power Mode
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_driving_power_mode(void)
+int32_t data_pool_get_driving_power_mode(void)
 {
 	return g_agl_cluster_data_pool.data.drivingPowerMode;
 }
@@ -1348,7 +1348,7 @@ IC_HMI_ON_OFF data_pool_get_driving_power_mode(void)
  * @param [in]	val		ON/OFF for Hot Temp Telltale
  * @return void
  */
-void data_pool_set_hot_temp(IC_HMI_ON_OFF val)
+void data_pool_set_hot_temp(int32_t val)
 {
 	g_agl_cluster_data_pool.data.hotTemp = val;
 }
@@ -1356,10 +1356,10 @@ void data_pool_set_hot_temp(IC_HMI_ON_OFF val)
  * Data pool getter for Hot Temp
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_hot_temp(void)
+int32_t data_pool_get_hot_temp(void)
 {
 	return g_agl_cluster_data_pool.data.hotTemp;
 }
@@ -1370,7 +1370,7 @@ IC_HMI_ON_OFF data_pool_get_hot_temp(void)
  * @param [in]	val		ON/OFF for Low Temp Telltale
  * @return void
  */
-void data_pool_set_low_temp(IC_HMI_ON_OFF val)
+void data_pool_set_low_temp(int32_t val)
 {
 	g_agl_cluster_data_pool.data.lowTemp = val;
 }
@@ -1378,10 +1378,10 @@ void data_pool_set_low_temp(IC_HMI_ON_OFF val)
  * Data pool getter for Low Temp
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
  *							IC_HMI_ON	off
  */
-IC_HMI_ON_OFF data_pool_get_low_temp(void)
+int32_t data_pool_get_low_temp(void)
 {
 	return g_agl_cluster_data_pool.data.lowTemp;
 }
@@ -1466,7 +1466,7 @@ void data_pool_set_trcom_unit_val(int32_t val)
  * Data pool getter for Trcom Unit Val
  *
  * @param [in]	void
- * @return int32_t	Value for Trcom Unit
+ * @return IC_HMI_TRCOM_UNIT_VAL	Value for Trcom Unit
  */
 int32_t data_pool_get_trcom_unit_val(void)
 {
@@ -1508,7 +1508,7 @@ void data_pool_set_avg_speed_b_val(uint16_t val)
  * Data pool getter for Avg SpeedB Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_avg_speed_b_val(void)
@@ -1530,7 +1530,7 @@ void data_pool_set_hour_a_val(uint16_t val)
  * Data pool getter for HourA Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_hour_a_val(void)
@@ -1552,7 +1552,7 @@ void data_pool_set_hour_b_val(uint16_t val)
  * Data pool getter for HourB Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_hour_b_val(void)
@@ -1574,7 +1574,7 @@ void data_pool_set_minute_a_val(uint8_t val)
  * Data pool getter for Minute A Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint8_t data_pool_get_minute_a_val(void)
@@ -1596,7 +1596,7 @@ void data_pool_set_minute_b_val(uint8_t val)
  * Data pool getter for Minute B Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint8_t data_pool_get_minute_b_val(void)
@@ -1618,7 +1618,7 @@ void data_pool_set_second_a_val(uint8_t val)
  * Data pool getter for Second A Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint8_t data_pool_get_second_a_val(void)
@@ -1640,7 +1640,7 @@ void data_pool_set_second_b_val(uint8_t val)
  * Data pool getter for Second B Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint8_t data_pool_get_second_b_val(void)
@@ -1662,7 +1662,7 @@ void data_pool_set_o_temp_val(int16_t val)
  * Data pool getter for O Temp Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 int16_t data_pool_get_o_temp_val(void)
@@ -1676,7 +1676,7 @@ int16_t data_pool_get_o_temp_val(void)
  * @param [in]	val		ON/OFF for O Temp Unit Val
  * @return void
  */
-void data_pool_set_o_temp_unit_val(IC_HMI_OTEMP_UNIT_VAL val)
+void data_pool_set_o_temp_unit_val(int32_t val)
 {
 	g_agl_cluster_data_pool.data.oTempUnitVal = val;
 }
@@ -1684,10 +1684,10 @@ void data_pool_set_o_temp_unit_val(IC_HMI_OTEMP_UNIT_VAL val)
  * Data pool getter for O Temp Unit Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
-IC_HMI_OTEMP_UNIT_VAL data_pool_get_o_temp_unit_val(void)
+int32_t data_pool_get_o_temp_unit_val(void)
 {
 	return g_agl_cluster_data_pool.data.oTempUnitVal;
 }
@@ -1706,7 +1706,7 @@ void data_pool_set_cru_range_val(uint16_t val)
  * Data pool getter for Cru Range Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_cru_range_val(void)
@@ -1728,7 +1728,7 @@ void data_pool_set_avg_fuel_a_val(uint16_t val)
  * Data pool getter for Avg FuelA Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_avg_fuel_a_val(void)
@@ -1750,7 +1750,7 @@ void data_pool_set_avg_fuel_b_val(uint16_t val)
  * Data pool getter for Avg FuelB Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_avg_fuel_b_val(void)
@@ -1772,7 +1772,7 @@ void data_pool_set_ins_fuel_a_val(uint16_t val)
  * Data pool getter for Ins FuelA Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_ins_fuel_a_val(void)
@@ -1794,7 +1794,7 @@ void data_pool_set_ins_fuel_b_val(uint16_t val)
  * Data pool getter for Ins FuelB Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint16_t data_pool_get_ins_fuel_b_val(void)
@@ -1808,7 +1808,7 @@ uint16_t data_pool_get_ins_fuel_b_val(void)
  * @param [in]	val		ON/OFF for Fuel Economy Unit Val
  * @return void
  */
-void data_pool_set_fuel_economy_uit_val(IC_HMI_FUEL_ECONOMY_UNIT_VAL val)
+void data_pool_set_fuel_economy_uit_val(int32_t val)
 {
 	g_agl_cluster_data_pool.data.fuelEconomyUnitVal = val;
 }
@@ -1816,10 +1816,10 @@ void data_pool_set_fuel_economy_uit_val(IC_HMI_FUEL_ECONOMY_UNIT_VAL val)
  * Data pool getter for Fuel Economy Unit Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
-IC_HMI_FUEL_ECONOMY_UNIT_VAL data_pool_get_fuel_economy_uit_val(void)
+int32_t data_pool_get_fuel_economy_uit_val(void)
 {
 	return g_agl_cluster_data_pool.data.fuelEconomyUnitVal;
 }
@@ -1833,7 +1833,7 @@ IC_HMI_FUEL_ECONOMY_UNIT_VAL data_pool_get_fuel_economy_uit_val(void)
  * @param [in]	val		ON/OFF for Gear At Val
  * @return void
  */
-void data_pool_set_gear_at_val(IC_HMI_GEAR_AT_VAL val)
+void data_pool_set_gear_at_val(int32_t val)
 {
 	g_agl_cluster_data_pool.data.gearAtVal = val;
 }
@@ -1841,10 +1841,10 @@ void data_pool_set_gear_at_val(IC_HMI_GEAR_AT_VAL val)
  * Data pool getter for Gear At Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
-IC_HMI_GEAR_AT_VAL data_pool_get_gear_at_val(void)
+int32_t data_pool_get_gear_at_val(void)
 {
 	return g_agl_cluster_data_pool.data.gearAtVal;
 }
@@ -1855,7 +1855,7 @@ IC_HMI_GEAR_AT_VAL data_pool_get_gear_at_val(void)
  * @param [in]	val		ON/OFF for Gear Mt Val
  * @return void
  */
-void data_pool_set_gear_mt_val(IC_HMI_GEAR_MT_VAL val)
+void data_pool_set_gear_mt_val(int32_t val)
 {
 	g_agl_cluster_data_pool.data.gearMtVal = val;
 }
@@ -1863,10 +1863,10 @@ void data_pool_set_gear_mt_val(IC_HMI_GEAR_MT_VAL val)
  * Data pool getter for Gear Mt Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
-IC_HMI_GEAR_MT_VAL data_pool_get_gear_mt_val(void)
+int32_t data_pool_get_gear_mt_val(void)
 {
 	return g_agl_cluster_data_pool.data.gearMtVal;
 }
@@ -1888,7 +1888,7 @@ void data_pool_set_speed_analog_val(uint32_t val)
  * Data pool getter for Speed Analog Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint32_t data_pool_get_speed_analog_val(void)
@@ -1902,7 +1902,7 @@ uint32_t data_pool_get_speed_analog_val(void)
  * @param [in]	val		ON/OFF for Speed Analog Digital Val
  * @return void
  */
-void data_pool_set_speed_analog_digital_val(IC_HMI_SP_UNIT_VAL val)
+void data_pool_set_speed_analog_digital_val(int32_t val)
 {
 	g_agl_cluster_data_pool.data.spAnaDigUnitVal = val;
 }
@@ -1910,10 +1910,10 @@ void data_pool_set_speed_analog_digital_val(IC_HMI_SP_UNIT_VAL val)
  * Data pool getter for Speed Analog Digital Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
-IC_HMI_SP_UNIT_VAL data_pool_get_speed_analog_digital_val(void)
+int32_t data_pool_get_speed_analog_digital_val(void)
 {
 	return g_agl_cluster_data_pool.data.spAnaDigUnitVal;
 }
@@ -1935,7 +1935,7 @@ void data_pool_set_tacho_analog_val(uint32_t val)
  * Data pool getter for Tacho Analog Val
  *
  * @param [in]	void
- * @return IC_HMI_ON_OFF	IC_HMI_OFF	on
+ * @return int32_t	IC_HMI_OFF	on
 							IC_HMI_ON	off
  */
 uint32_t data_pool_get_tacho_analog_val(void)

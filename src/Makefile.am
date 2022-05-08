@@ -12,6 +12,7 @@ cluster_service_SOURCES = \
 # Additional library
 cluster_service_LDADD = \
 	$(top_srcdir)/lib/libcluster_service_common.a \
+	$(top_srcdir)/lib/libcluster_service_static_configurator.a \
 	-lrt -lpthread \
 	@LIBSYSTEMD_LIBS@ 
 
@@ -29,8 +30,13 @@ cluster_service_LDFLAGS =
 
 # configure option 
 if ENABLE_ADDRESS_SANITIZER
-cluster_service_CFLAGS   += -fsanitize=address
+CFLAGS   += -fsanitize=address
 endif
+
+if ENABLE_GCOV
+CFLAGS   += -coverage
+endif
+
 
 #
 #if ENABLE_PRINTFDEBUG
@@ -38,3 +44,4 @@ endif
 #exsample_CXXFLAGS += -D_PRINTF_DEBUG_
 #endif
 
+CLEANFILES = *.gcda *.gcno

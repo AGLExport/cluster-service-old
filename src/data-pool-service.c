@@ -254,7 +254,6 @@ error_return:
 	return -1;
 }
 
-#ifndef UNIT_TEST
 /**
  * TImer handler for data pool passenger
  *
@@ -423,7 +422,6 @@ err_return:
 
 	return ret;
 }
-#endif
 
 /**
  * Function for data pool passenger cleanup
@@ -453,7 +451,8 @@ int data_pool_service_cleanup(data_pool_service_handle handle)
 		}
 	}
 
-	(void) sd_event_source_disable_unref(dp->notification_timer->timer_evsource);
+	if (dp->notification_timer != NULL)
+		(void) sd_event_source_disable_unref(dp->notification_timer->timer_evsource);
 	(void) sd_event_source_disable_unref(dp->socket_evsource);
 	free(dp->notification_timer);
 	free(dp);

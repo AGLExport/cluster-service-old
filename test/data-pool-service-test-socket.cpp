@@ -18,13 +18,13 @@ extern "C" {
 // Test Terget files ---------------------------------------
 using namespace ::testing;
 
-struct data_pool_service_test : Test, LibsystemdMockBase, SyscallIOMockBase {};
+struct data_pool_service_test_socket : Test, LibsystemdMockBase, SyscallIOMockBase {};
 
 
 //--------------------------------------------------------------------------------------------------------
 //  data_pool_service_cleanup test
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_service_cleanup__argument_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_service_cleanup__argument_error)
 {
 	int ret = -1;
 
@@ -36,7 +36,7 @@ TEST_F(data_pool_service_test, test_data_pool_service_cleanup__argument_error)
 //--------------------------------------------------------------------------------------------------------
 //  data_pool_incoming_handler test
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_incoming_handler__argument_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_incoming_handler__argument_error)
 {
 	int ret = -1;
 	
@@ -85,12 +85,13 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__argument_error)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_incoming_handler__server_socket_error)
 {
 	int ret = -1;
 	
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	// No revents
 	dp->socket_evsource = (sd_event_source *)(0xa8a8);
@@ -123,13 +124,14 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_er
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_incoming_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_incoming_handler__server_socket_incoming_error)
 {
 	int ret = -1;
 	data_pool_service_handle dp = NULL;
 
 	//dummy data alloc
 	dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	// accept INTR and error
 	EXPECT_CALL(sysiom, accept4(100, nullptr, nullptr, (SOCK_NONBLOCK | SOCK_CLOEXEC)))
@@ -179,7 +181,7 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_incoming_1st_session_in)
+TEST_F(data_pool_service_test_socket, test_data_pool_incoming_handler__server_socket_incoming_1st_session_in)
 {
 	int ret = -1;
 	data_pool_service_handle dp = NULL;
@@ -187,6 +189,8 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 	// 1st session in
 	//create dummy top session
 	dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
+
 	dp->parent_eventloop = (sd_event *)(0xa5a5);
 
 	EXPECT_CALL(sysiom, accept4(100, nullptr, nullptr, (SOCK_NONBLOCK | SOCK_CLOEXEC)))
@@ -210,7 +214,7 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 	ASSERT_EQ(0, ret);
 }
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_incoming_2nd_session_in)
+TEST_F(data_pool_service_test_socket, test_data_pool_incoming_handler__server_socket_incoming_2nd_session_in)
 {
 	int ret = -1;
 	data_pool_service_handle dp = NULL;
@@ -219,6 +223,7 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 	// 2nd session in
 	//create dummy top session
 	dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 	
 	dps = (struct s_data_pool_session*)calloc(1, sizeof(struct s_data_pool_session));
 	dps->socket_evsource = (sd_event_source *)long(0x8888);	//set dummy value
@@ -248,7 +253,7 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_incoming_loop_out_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_incoming_handler__server_socket_incoming_loop_out_error)
 {
 	int ret = -1;
 	data_pool_service_handle dp = NULL;
@@ -257,6 +262,7 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 	// loop out error
 	//create dummy top session
 	dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 	
 	dps = (struct s_data_pool_session*)calloc(1, sizeof(struct s_data_pool_session));
 	dps->socket_evsource = (sd_event_source *)long(0x8888);	//set dummy value
@@ -295,7 +301,7 @@ TEST_F(data_pool_service_test, test_data_pool_incoming_handler__server_socket_in
 //--------------------------------------------------------------------------------------------------------
 //  data_pool_sessions_handler test
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__argument_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__argument_error)
 {
 	int ret = -1;
 	
@@ -343,12 +349,13 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__argument_error)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__no_session)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__no_session)
 {
 	int ret = -1;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1, sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	// No revents
 	EXPECT_CALL(lsm, sd_event_source_disable_unref((sd_event_source *)(0x8a8a)))
@@ -386,13 +393,14 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__no_session)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_1)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__session_list_4_1)
 {
 	int ret = -1;
 	const int num_of_sessions = 4;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1, sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -428,13 +436,14 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_1
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_2)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__session_list_4_2)
 {
 	int ret = -1;
 	const int num_of_sessions = 4;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -470,13 +479,14 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_2
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_3)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__session_list_4_3)
 {
 	int ret = -1;
 	const int num_of_sessions = 4;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -513,13 +523,14 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_3
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_4)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__session_list_4_4)
 {
 	int ret = -1;
 	const int num_of_sessions = 4;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -558,12 +569,13 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_4_4
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_loop)
+TEST_F(data_pool_service_test_socket, test_data_pool_sessions_handler__session_list_loop)
 {
 	int ret = -1;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1, sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//Force loop out
 	struct s_data_pool_session *dps = NULL;
@@ -596,7 +608,7 @@ TEST_F(data_pool_service_test, test_data_pool_sessions_handler__session_list_loo
 //--------------------------------------------------------------------------------------------------------
 //  data_pool_message_passanger test
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_message_passanger__argument_error)
+TEST_F(data_pool_service_test_socket, test_data_pool_message_passanger__argument_error)
 {
 	int ret = -1;
 
@@ -606,12 +618,13 @@ TEST_F(data_pool_service_test, test_data_pool_message_passanger__argument_error)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_message_passanger__no_session)
+TEST_F(data_pool_service_test_socket, test_data_pool_message_passanger__no_session)
 {
 	int ret = -1;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1, sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	// No session list
 	ret = data_pool_message_passanger(dp);
@@ -627,13 +640,14 @@ TEST_F(data_pool_service_test, test_data_pool_message_passanger__no_session)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_8)
+TEST_F(data_pool_service_test_socket, test_data_pool_message_passanger__session_list_8)
 {
 	int ret = -1;
 	const int num_of_sessions = 8;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -672,13 +686,14 @@ TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_8)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_4)
+TEST_F(data_pool_service_test_socket, test_data_pool_message_passanger__session_list_4)
 {
 	int ret = -1;
 	const int num_of_sessions = 4;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -725,13 +740,14 @@ TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_4)
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_4_errorno)
+TEST_F(data_pool_service_test_socket, test_data_pool_message_passanger__session_list_4_errorno)
 {
 	int ret = -1;
 	const int num_of_sessions = 4;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//8 session test
 	struct s_data_pool_session *dps = NULL;
@@ -780,12 +796,13 @@ TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_4_
 }
 
 //--------------------------------------------------------------------------------------------------------
-TEST_F(data_pool_service_test, test_data_pool_message_passanger__session_list_loop)
+TEST_F(data_pool_service_test_socket, test_data_pool_message_passanger__session_list_loop)
 {
 	int ret = -1;
 
 	//dummy data alloc
 	data_pool_service_handle dp = (data_pool_service_handle)calloc(1,sizeof(struct s_data_pool_service));
+	dp->notification_timer = (struct s_data_pool_notification_timer*)calloc(1,sizeof(struct s_data_pool_notification_timer));
 
 	//Force loop out
 	struct s_data_pool_session *dps = NULL;
