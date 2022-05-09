@@ -1,0 +1,12 @@
+---
+# Configure clang-tidy for this project.
+
+Checks: >
+  -* ,
+  readability-function-cognitive-complexity
+
+# Turn all the warnings from the checks above into errors.
+WarningsAsErrors: "*"
+
+CheckOptions:
+  - { key: readability-function-cognitive-complexity.Threshold,          value: 1 }
