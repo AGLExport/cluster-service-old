@@ -16,19 +16,19 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_ARG_ENABLE([address-sanitizer],
   [AS_HELP_STRING([--enable-address-sanitizer], [Enable address sanitizer in build time (for debug, default is no)])],
   [:],
-  [enable_address_sanitizer])
+  [enable_address_sanitizer=no])
 AM_CONDITIONAL([ENABLE_ADDRESS_SANITIZER], [test "$enable_address_sanitizer" = "yes"])
 
 AC_ARG_ENABLE([gcov],
   [AS_HELP_STRING([--enable-gcov], [Enable gcov in build time (for debug, default is no)])],
   [:],
-  [enable_gcov])
+  [enable_gcov=no])
 AM_CONDITIONAL([ENABLE_GCOV], [test "$enable_gcov" = "yes"])
 
 AC_ARG_ENABLE([test],
   [AS_HELP_STRING([--enable-test], [Enable unit test build (requir to gtest and gmock, default is no])],
   [:],
-  [enable_test])
+  [enable_test=no])
 AM_CONDITIONAL([ENABLE_TEST], [test "$enable_test" = "yes"])
 
 
@@ -51,8 +51,8 @@ AM_PROG_LIBTOOL
 
 PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES([LIBSYSTEMD], [libsystemd])
-PKG_CHECK_MODULES([GTEST_MAIN], [gtest_main])
-PKG_CHECK_MODULES([GMOCK_MAIN], [gmock_main])
+PKG_CHECK_MODULES([GTEST_MAIN], [gtest_main], , enable_test=no)
+PKG_CHECK_MODULES([GMOCK_MAIN], [gmock_main], , enable_test=no)
 
 
 
