@@ -25,6 +25,12 @@ AC_ARG_ENABLE([gcov],
   [enable_gcov])
 AM_CONDITIONAL([ENABLE_GCOV], [test "$enable_gcov" = "yes"])
 
+AC_ARG_ENABLE([test],
+  [AS_HELP_STRING([--enable-test], [Enable unit test build (requir to gtest and gmock, default is no])],
+  [:],
+  [enable_test])
+AM_CONDITIONAL([ENABLE_TEST], [test "$enable_test" = "yes"])
+
 
 AC_ARG_ENABLE([printfdebug],
   [AS_HELP_STRING([--enable-printfdebug], [Enable user printf debug (default is no)])],
