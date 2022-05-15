@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 bin_PROGRAMS = \
 	cluster_service_util_test data_pool_service_test_socket data_pool_service_test_timer \
 	data_pool_service_test_init \
-	cluster_api_test
+	cluster_api_test_telltale cluster_api_test_trip 
 
 
 cluster_service_util_test_SOURCES = \
@@ -19,9 +19,11 @@ data_pool_service_test_timer_SOURCES = \
 data_pool_service_test_init_SOURCES = \
 	data-pool-service-test-init.cpp 
 
-cluster_api_test_SOURCES = \
+cluster_api_test_telltale_SOURCES = \
 	cluster-api-test-telltale.cpp
 
+cluster_api_test_trip_SOURCES = \
+	cluster-api-test-trip.cpp
 
 # options
 # Additional library
@@ -58,7 +60,7 @@ CFLAGS = \
 # C++ compiler options
 CXXFLAGS = \
 	-g \
-	-std=c++11 \
+	-std=c++11 -fno-exceptions \
 	-fsanitize=address -coverage \
 	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/include \

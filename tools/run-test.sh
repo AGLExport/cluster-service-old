@@ -4,5 +4,6 @@
 ./test/data_pool_service_test_socket
 ./test/data_pool_service_test_timer
 ./test/data_pool_service_test_init
-./test/cluster_api_test
+./test/cluster_api_test_telltale
+./test/cluster_api_test_trip
 
