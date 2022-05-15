@@ -5,9 +5,11 @@
 #include <sys/socket.h>
 
 /*
+ssize_t read(int fd, void *buf, size_t count);
 ssize_t write(int fd, const void *buf, size_t count);
 int close(int fd);
 */
+static std::function<ssize_t(int fd, void *buf, size_t count)> _read;
 static std::function<ssize_t(int fd, const void *buf, size_t count)> _write;
 static std::function<int(int)> _close;
 
@@ -34,6 +36,9 @@ static std::function<int(int sockfd, struct sockaddr *addr,
 class SyscallIOMocker {
 public:
 	SyscallIOMocker() {
+		_read = [this](int fd, void *buf, size_t count) {
+			return read(fd, buf, count);
+		};
 		_write = [this](int fd, const void *buf, size_t count) {
 			return write(fd, buf, count);
 		};
@@ -61,6 +66,7 @@ public:
 	}
 
 	~SyscallIOMocker() {
+		_read = {};
 		_write = {};
 		_close = {};
 
@@ -72,6 +78,7 @@ public:
 		_accept4 = {};
 	}
 
+	MOCK_CONST_METHOD3(read, ssize_t(int fd, void *buf, size_t count));
 	MOCK_CONST_METHOD3(write, ssize_t(int fd, const void *buf, size_t count));
 	MOCK_CONST_METHOD1(close, int(int));
 
@@ -91,6 +98,10 @@ protected:
 #ifdef __cplusplus
 extern "C" {
 #endif
+ssize_t read(int fd, void *buf, size_t count)
+{
+    return _read(fd, buf, count);
+}
 
 ssize_t write(int fd, const void *buf, size_t count)
 {

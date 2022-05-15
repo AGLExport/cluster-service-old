@@ -4,7 +4,8 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 bin_PROGRAMS = \
 	cluster_service_util_test data_pool_service_test_socket data_pool_service_test_timer \
 	data_pool_service_test_init \
-	cluster_api_test_telltale cluster_api_test_trip 
+	cluster_api_test_telltale cluster_api_test_trip cluster_api_test \
+	data_pool_client
 
 
 cluster_service_util_test_SOURCES = \
@@ -24,6 +25,13 @@ cluster_api_test_telltale_SOURCES = \
 
 cluster_api_test_trip_SOURCES = \
 	cluster-api-test-trip.cpp
+
+cluster_api_test_SOURCES = \
+	cluster-api-test.cpp
+
+data_pool_client_SOURCES = \
+	data-pool-client-test.cpp 
+
 
 # options
 # Additional library

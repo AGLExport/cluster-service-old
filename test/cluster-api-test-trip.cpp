@@ -1294,3 +1294,586 @@ TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__o_temp_un
 	ASSERT_EQ(IC_HMI_OTEMP_UNIT_K, (int32_t)apival);
 
 }
+//--------------------------------------------------------------------------------------------------------
+TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__cru_range_val)
+{
+	int ret = -1;
+	uint16_t val = 0;
+	unsigned short apival = 0;
+	uint64_t checker = 0;
+
+	const uint16_t minimam_val = 0x0000ul;	//Cruise Range Min (0)
+	const uint16_t max_val = 0x064aul;	//Cruise Range Max (1610)
+	const uint16_t out_of_range_start_val = 0x064bul;	//invalid value (1611~65533)
+	const uint16_t out_of_range_end_val = 0xfffdul;	//invalid value (1611~65533)
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+
+	memset(&g_agl_cluster_data_pool.data,0,sizeof(g_agl_cluster_data_pool.data));
+
+	val = data_pool_get_cru_range_val();
+	ASSERT_EQ(0, val);
+	
+	data_pool_set_cru_range_val(UINT16_MAX);
+	ASSERT_EQ(UINT16_MAX, g_agl_cluster_data_pool.data.cruRangeVal);
+
+	val = data_pool_get_cru_range_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	g_agl_cluster_data_pool.data.cruRangeVal = 0;
+	ret = memcmp(&g_agl_cluster_data_pool.data, &zerodata, sizeof(zerodata));
+	ASSERT_EQ(0, ret);
+
+	g_agl_cluster_data_pool.data.cruRangeVal = UINT16_MAX;
+	val = data_pool_get_cru_range_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	data_pool_set_cru_range_val(0);
+	ASSERT_EQ(0, g_agl_cluster_data_pool.data.cruRangeVal);
+
+	checker = 0;
+	for (uint16_t i = minimam_val; i <= max_val;i++) {
+		data_pool_set_cru_range_val(i);
+		val = data_pool_get_cru_range_val();
+		ASSERT_EQ(i, val);
+
+		apival = getCruRangeVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	checker = 0;
+	for (uint16_t i = out_of_range_start_val; i <= (out_of_range_start_val+100);i++) {
+		data_pool_set_cru_range_val(i);
+		val = data_pool_get_cru_range_val();
+		ASSERT_EQ(i, val);
+
+		apival = getCruRangeVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+	
+	checker = 0;
+	for (uint16_t i = out_of_range_end_val-100; i <= out_of_range_end_val;i++) {
+		data_pool_set_cru_range_val(i);
+		val = data_pool_get_cru_range_val();
+		ASSERT_EQ(i, val);
+
+		apival = getCruRangeVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+	data_pool_set_cru_range_val(0xFFFEul);
+	val = data_pool_get_cru_range_val();
+	ASSERT_EQ(0xFFFEul, val);
+
+	apival = getCruRangeVal();
+	ASSERT_EQ(0xFFFEul, (uint16_t)apival);
+
+	data_pool_set_cru_range_val(0xFFFFul);
+	val = data_pool_get_cru_range_val();
+	ASSERT_EQ(0xFFFFul, val);
+
+	apival = getCruRangeVal();
+	ASSERT_EQ(0xFFFFul, (uint16_t)apival);
+}
+//--------------------------------------------------------------------------------------------------------
+TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__avg_fuel_a_val)
+{
+	int ret = -1;
+	uint16_t val = 0;
+	unsigned short apival = 0;
+	uint64_t checker = 0;
+
+	const uint16_t minimam_val = 0x0000ul;	//Average Fuel TripA Min (0.0)
+	const uint16_t max_val = 0x07cful;	//Average Fuel TripA Max (199.9)
+	const uint16_t out_of_range_start_val = 0x07d0ul;	//invalid value (200.0~6553.3)
+	const uint16_t out_of_range_end_val = 0xfffdul;	//invalid value (200.0~6553.3)
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+
+	memset(&g_agl_cluster_data_pool.data,0,sizeof(g_agl_cluster_data_pool.data));
+
+	val = data_pool_get_avg_fuel_a_val();
+	ASSERT_EQ(0, val);
+	
+	data_pool_set_avg_fuel_a_val(UINT16_MAX);
+	ASSERT_EQ(UINT16_MAX, g_agl_cluster_data_pool.data.avgFuelAVal);
+
+	val = data_pool_get_avg_fuel_a_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	g_agl_cluster_data_pool.data.avgFuelAVal = 0;
+	ret = memcmp(&g_agl_cluster_data_pool.data, &zerodata, sizeof(zerodata));
+	ASSERT_EQ(0, ret);
+
+	g_agl_cluster_data_pool.data.avgFuelAVal = UINT16_MAX;
+	val = data_pool_get_avg_fuel_a_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	data_pool_set_avg_fuel_a_val(0);
+	ASSERT_EQ(0, g_agl_cluster_data_pool.data.avgFuelAVal);
+
+	checker = 0;
+	for (uint16_t i = minimam_val; i <= max_val;i++) {
+		data_pool_set_avg_fuel_a_val(i);
+		val = data_pool_get_avg_fuel_a_val();
+		ASSERT_EQ(i, val);
+
+		apival = getAvgFuelAVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	checker = 0;
+	for (uint16_t i = out_of_range_start_val; i <= (out_of_range_start_val+100);i++) {
+		data_pool_set_avg_fuel_a_val(i);
+		val = data_pool_get_avg_fuel_a_val();
+		ASSERT_EQ(i, val);
+
+		apival = getAvgFuelAVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+	
+	checker = 0;
+	for (uint16_t i = out_of_range_end_val-100; i <= out_of_range_end_val;i++) {
+		data_pool_set_avg_fuel_a_val(i);
+		val = data_pool_get_avg_fuel_a_val();
+		ASSERT_EQ(i, val);
+
+		apival = getAvgFuelAVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+	data_pool_set_avg_fuel_a_val(0xFFFEul);
+	val = data_pool_get_avg_fuel_a_val();
+	ASSERT_EQ(0xFFFEul, val);
+
+	apival = getAvgFuelAVal();
+	ASSERT_EQ(0xFFFEul, (uint16_t)apival);
+
+	data_pool_set_avg_fuel_a_val(0xFFFFul);
+	val = data_pool_get_avg_fuel_a_val();
+	ASSERT_EQ(0xFFFFul, val);
+
+	apival = getAvgFuelAVal();
+	ASSERT_EQ(0xFFFFul, (uint16_t)apival);
+}
+//--------------------------------------------------------------------------------------------------------
+TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__avg_fuel_b_val)
+{
+	int ret = -1;
+	uint16_t val = 0;
+	unsigned short apival = 0;
+	uint64_t checker = 0;
+
+	const uint16_t minimam_val = 0x0000ul;	//Average Fuel TripB Min (0.0)
+	const uint16_t max_val = 0x07cful;	//Average Fuel TripB Max (199.9)
+	const uint16_t out_of_range_start_val = 0x07d0ul;	//invalid value (200.0~6553.3)
+	const uint16_t out_of_range_end_val = 0xfffdul;	//invalid value (200.0~6553.3)
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+
+	memset(&g_agl_cluster_data_pool.data,0,sizeof(g_agl_cluster_data_pool.data));
+
+	val = data_pool_get_avg_fuel_b_val();
+	ASSERT_EQ(0, val);
+	
+	data_pool_set_avg_fuel_b_val(UINT16_MAX);
+	ASSERT_EQ(UINT16_MAX, g_agl_cluster_data_pool.data.avgFuelBVal);
+
+	val = data_pool_get_avg_fuel_b_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	g_agl_cluster_data_pool.data.avgFuelBVal = 0;
+	ret = memcmp(&g_agl_cluster_data_pool.data, &zerodata, sizeof(zerodata));
+	ASSERT_EQ(0, ret);
+
+	g_agl_cluster_data_pool.data.avgFuelBVal = UINT16_MAX;
+	val = data_pool_get_avg_fuel_b_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	data_pool_set_avg_fuel_b_val(0);
+	ASSERT_EQ(0, g_agl_cluster_data_pool.data.avgFuelBVal);
+
+	checker = 0;
+	for (uint16_t i = minimam_val; i <= max_val;i++) {
+		data_pool_set_avg_fuel_b_val(i);
+		val = data_pool_get_avg_fuel_b_val();
+		ASSERT_EQ(i, val);
+
+		apival = getAvgFuelBVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	checker = 0;
+	for (uint16_t i = out_of_range_start_val; i <= (out_of_range_start_val+100);i++) {
+		data_pool_set_avg_fuel_b_val(i);
+		val = data_pool_get_avg_fuel_b_val();
+		ASSERT_EQ(i, val);
+
+		apival = getAvgFuelBVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+	
+	checker = 0;
+	for (uint16_t i = out_of_range_end_val-100; i <= out_of_range_end_val;i++) {
+		data_pool_set_avg_fuel_b_val(i);
+		val = data_pool_get_avg_fuel_b_val();
+		ASSERT_EQ(i, val);
+
+		apival = getAvgFuelBVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+	data_pool_set_avg_fuel_b_val(0xFFFEul);
+	val = data_pool_get_avg_fuel_b_val();
+	ASSERT_EQ(0xFFFEul, val);
+
+	apival = getAvgFuelBVal();
+	ASSERT_EQ(0xFFFEul, (uint16_t)apival);
+
+	data_pool_set_avg_fuel_b_val(0xFFFFul);
+	val = data_pool_get_avg_fuel_b_val();
+	ASSERT_EQ(0xFFFFul, val);
+
+	apival = getAvgFuelBVal();
+	ASSERT_EQ(0xFFFFul, (uint16_t)apival);
+}
+//--------------------------------------------------------------------------------------------------------
+TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__ins_fuel_a_val)
+{
+	int ret = -1;
+	uint16_t val = 0;
+	unsigned short apival = 0;
+	uint64_t checker = 0;
+
+	const uint16_t minimam_val = 0x0000ul;	//Average Fuel TripA Min (0.0)
+	const uint16_t max_val = 0x07cful;	//Average Fuel TripA Max (199.9)
+	const uint16_t out_of_range_start_val = 0x07d0ul;	//invalid value (200.0~6553.3)
+	const uint16_t out_of_range_end_val = 0xfffdul;	//invalid value (200.0~6553.3)
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+
+	memset(&g_agl_cluster_data_pool.data,0,sizeof(g_agl_cluster_data_pool.data));
+
+	val = data_pool_get_ins_fuel_a_val();
+	ASSERT_EQ(0, val);
+	
+	data_pool_set_ins_fuel_a_val(UINT16_MAX);
+	ASSERT_EQ(UINT16_MAX, g_agl_cluster_data_pool.data.insFuelAVal);
+
+	val = data_pool_get_ins_fuel_a_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	g_agl_cluster_data_pool.data.insFuelAVal = 0;
+	ret = memcmp(&g_agl_cluster_data_pool.data, &zerodata, sizeof(zerodata));
+	ASSERT_EQ(0, ret);
+
+	g_agl_cluster_data_pool.data.insFuelAVal = UINT16_MAX;
+	val = data_pool_get_ins_fuel_a_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	data_pool_set_ins_fuel_a_val(0);
+	ASSERT_EQ(0, g_agl_cluster_data_pool.data.insFuelAVal);
+
+	checker = 0;
+	for (uint16_t i = minimam_val; i <= max_val;i++) {
+		data_pool_set_ins_fuel_a_val(i);
+		val = data_pool_get_ins_fuel_a_val();
+		ASSERT_EQ(i, val);
+
+		apival = getInsFuelAVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	checker = 0;
+	for (uint16_t i = out_of_range_start_val; i <= (out_of_range_start_val+100);i++) {
+		data_pool_set_ins_fuel_a_val(i);
+		val = data_pool_get_ins_fuel_a_val();
+		ASSERT_EQ(i, val);
+
+		apival = getInsFuelAVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+	
+	checker = 0;
+	for (uint16_t i = out_of_range_end_val-100; i <= out_of_range_end_val;i++) {
+		data_pool_set_ins_fuel_a_val(i);
+		val = data_pool_get_ins_fuel_a_val();
+		ASSERT_EQ(i, val);
+
+		apival = getInsFuelAVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+	data_pool_set_ins_fuel_a_val(0xFFFEul);
+	val = data_pool_get_ins_fuel_a_val();
+	ASSERT_EQ(0xFFFEul, val);
+
+	apival = getInsFuelAVal();
+	ASSERT_EQ(0xFFFEul, (uint16_t)apival);
+
+	data_pool_set_ins_fuel_a_val(0xFFFFul);
+	val = data_pool_get_ins_fuel_a_val();
+	ASSERT_EQ(0xFFFFul, val);
+
+	apival = getInsFuelAVal();
+	ASSERT_EQ(0xFFFFul, (uint16_t)apival);
+}
+//--------------------------------------------------------------------------------------------------------
+TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__ins_fuel_b_val)
+{
+	int ret = -1;
+	uint16_t val = 0;
+	unsigned short apival = 0;
+	uint64_t checker = 0;
+
+	const uint16_t minimam_val = 0x0000ul;	//Average Fuel TripA Min (0.0)
+	const uint16_t max_val = 0x07cful;	//Average Fuel TripA Max (199.9)
+	const uint16_t out_of_range_start_val = 0x07d0ul;	//invalid value (200.0~6553.3)
+	const uint16_t out_of_range_end_val = 0xfffdul;	//invalid value (200.0~6553.3)
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+
+	memset(&g_agl_cluster_data_pool.data,0,sizeof(g_agl_cluster_data_pool.data));
+
+	val = data_pool_get_ins_fuel_b_val();
+	ASSERT_EQ(0, val);
+	
+	data_pool_set_ins_fuel_b_val(UINT16_MAX);
+	ASSERT_EQ(UINT16_MAX, g_agl_cluster_data_pool.data.insFuelBVal);
+
+	val = data_pool_get_ins_fuel_b_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	g_agl_cluster_data_pool.data.insFuelBVal = 0;
+	ret = memcmp(&g_agl_cluster_data_pool.data, &zerodata, sizeof(zerodata));
+	ASSERT_EQ(0, ret);
+
+	g_agl_cluster_data_pool.data.insFuelBVal = UINT16_MAX;
+	val = data_pool_get_ins_fuel_b_val();
+	ASSERT_EQ(UINT16_MAX, val);
+
+	data_pool_set_ins_fuel_b_val(0);
+	ASSERT_EQ(0, g_agl_cluster_data_pool.data.insFuelBVal);
+
+	checker = 0;
+	for (uint16_t i = minimam_val; i <= max_val;i++) {
+		data_pool_set_ins_fuel_b_val(i);
+		val = data_pool_get_ins_fuel_b_val();
+		ASSERT_EQ(i, val);
+
+		apival = getInsFuelBVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	checker = 0;
+	for (uint16_t i = out_of_range_start_val; i <= (out_of_range_start_val+100);i++) {
+		data_pool_set_ins_fuel_b_val(i);
+		val = data_pool_get_ins_fuel_b_val();
+		ASSERT_EQ(i, val);
+
+		apival = getInsFuelBVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+	
+	checker = 0;
+	for (uint16_t i = out_of_range_end_val-100; i <= out_of_range_end_val;i++) {
+		data_pool_set_ins_fuel_b_val(i);
+		val = data_pool_get_ins_fuel_b_val();
+		ASSERT_EQ(i, val);
+
+		apival = getInsFuelBVal();
+		ASSERT_EQ(i, (uint16_t)apival);
+
+		ASSERT_LE(checker, (uint64_t)UINT16_MAX);
+		checker++;
+	}
+
+	/* others
+		0xFFFE ："-" view
+		0xFFFF ：disable
+	*/
+	data_pool_set_ins_fuel_b_val(0xFFFEul);
+	val = data_pool_get_ins_fuel_b_val();
+	ASSERT_EQ(0xFFFEul, val);
+
+	apival = getInsFuelBVal();
+	ASSERT_EQ(0xFFFEul, (uint16_t)apival);
+
+	data_pool_set_ins_fuel_b_val(0xFFFFul);
+	val = data_pool_get_ins_fuel_b_val();
+	ASSERT_EQ(0xFFFFul, val);
+
+	apival = getInsFuelBVal();
+	ASSERT_EQ(0xFFFFul, (uint16_t)apival);
+}
+//--------------------------------------------------------------------------------------------------------
+TEST_F(data_pool_test_set_get_trip, test_data_pool_test_set_get_trcom__fuel_economy_uit_val)
+{
+	int ret = -1;
+	int32_t val = 0;
+	IC_HMI_FUEL_ECONOMY_UNIT_VAL apival = IC_HMI_FUEL_KWH_100KM;
+	/*
+	 0：IC_HMI_FUEL_KM_L
+	 1：IC_HMI_FUEL_MPG_US
+	 2：IC_HMI_FUEL_MPG_IG
+	 3：IC_HMI_FUEL_L_100KM
+	 4：IC_HMI_FUEL_MILE_KWH
+	 5：IC_HMI_FUEL_KM_KWH
+	 6：IC_HMI_FUEL_MILE_KG
+	 7：IC_HMI_FUEL_KM_KG
+	 8：IC_HMI_FUEL_KWH_100KM
+	*/
+
+	memset(&g_agl_cluster_data_pool.data,0,sizeof(g_agl_cluster_data_pool.data));
+
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(0, val);
+	
+	data_pool_set_fuel_economy_uit_val(INT32_MAX);
+	ASSERT_EQ(INT32_MAX, g_agl_cluster_data_pool.data.fuelEconomyUnitVal);
+
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(INT32_MAX, val);
+
+	g_agl_cluster_data_pool.data.fuelEconomyUnitVal = 0;
+	ret = memcmp(&g_agl_cluster_data_pool.data, &zerodata, sizeof(zerodata));
+	ASSERT_EQ(0, ret);
+
+	g_agl_cluster_data_pool.data.fuelEconomyUnitVal = INT32_MAX;
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(INT32_MAX, val);
+
+	data_pool_set_fuel_economy_uit_val(0);
+	ASSERT_EQ(0, g_agl_cluster_data_pool.data.fuelEconomyUnitVal);
+
+	data_pool_set_fuel_economy_uit_val(0);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(0, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_KM_L, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(1);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(1, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_MPG_US, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(2);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(2, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_MPG_IG, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(3);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(3, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_L_100KM, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(4);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(4, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_MILE_KWH, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(5);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(5, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_KM_KWH, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(6);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(6, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_MILE_KG, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(7);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(7, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_KM_KG, (int32_t)apival);
+
+	data_pool_set_fuel_economy_uit_val(8);
+	val = data_pool_get_fuel_economy_uit_val();
+	ASSERT_EQ(8, val);
+
+	apival = getFuelEconomyUnitVal();
+	ASSERT_EQ(IC_HMI_FUEL_KWH_100KM, (int32_t)apival);
+}
