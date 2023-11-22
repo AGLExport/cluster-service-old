@@ -22,7 +22,7 @@ struct s_demo_data_timer {
 
 static struct s_demo_data_timer g_demo_timer;
 
-const uint64_t g_demo_data_update_interval = 16 * 1000; // usec
+const uint64_t g_demo_data_update_interval = 10 * 1000; // usec
 
 
 static void do_demo(void)
@@ -34,31 +34,40 @@ static void do_demo(void)
 
 	// speed
 	{
-		if (((g_demo_timer.demo_count / 250) % 2) == 0)
-			data_pool_set_speed_analog_val(data_pool_get_speed_analog_val() + 100);
-		else
-			data_pool_set_speed_analog_val(data_pool_get_speed_analog_val() - 100);
+		if ((g_demo_timer.demo_count % 500) < 400) {
+			if (((g_demo_timer.demo_count / 500) % 2) == 0) {
+				data_pool_set_speed_analog_val(data_pool_get_speed_analog_val() + 50);
+			} else {
+				data_pool_set_speed_analog_val(data_pool_get_speed_analog_val() - 50);
+			}
+		}
 	}
 
 	// Telltale
 	{
-		if (((g_demo_timer.demo_count / 100) % 4) == 1) {
-			if ((g_demo_timer.demo_count % 10) == 1) {
+		if (((g_demo_timer.demo_count / 300) % 4) == 1) {
+			if ((g_demo_timer.demo_count % 30) == 1) {
 
 				if (data_pool_get_turn_r() == IC_HMI_ON)
 					data_pool_set_turn_r(IC_HMI_OFF);
 				else
 					data_pool_set_turn_r(IC_HMI_ON);
 
-				if (data_pool_get_seatbelt() == IC_HMI_ON)
-					data_pool_set_seatbelt(IC_HMI_OFF);
+
+				if (data_pool_get_front_right_seatbelt() == IC_HMI_ON)
+					data_pool_set_front_right_seatbelt(IC_HMI_OFF);
+				else 
+					data_pool_set_front_right_seatbelt(IC_HMI_ON);
+
+				if (data_pool_get_front_left_seatbelt() == IC_HMI_ON)
+					data_pool_set_front_left_seatbelt(IC_HMI_OFF);
 				else
-					data_pool_set_seatbelt(IC_HMI_ON);
+					data_pool_set_front_left_seatbelt(IC_HMI_ON);
 			}
 		}
 
-		if (((g_demo_timer.demo_count / 100) % 4) == 3) {
-			if ((g_demo_timer.demo_count % 10) == 1) {
+		if (((g_demo_timer.demo_count / 300) % 4) == 3) {
+			if ((g_demo_timer.demo_count % 30) == 1) {
 
 				if (data_pool_get_turn_l() == IC_HMI_ON)
 					data_pool_set_turn_l(IC_HMI_OFF);

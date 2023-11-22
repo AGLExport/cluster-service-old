@@ -41,7 +41,7 @@ static void do_demo(void)
 
 	fspeed = ((float) speed) / 100.0f;
 
-	fprintf(stdout, "Speed %03.2fkm/s  : TripA %1d  TripB %1d : Turen A %1d\n", fspeed, tripa, tripb, turn_r);
+	fprintf(stdout, "Speed %03.2fkm/s  : TripA %1d  TripB %1d : Turen A %1d\r", fspeed, tripa, tripb, turn_r);
 
 	g_demo_timer.demo_count++;
 }
@@ -115,7 +115,7 @@ int demo_data_checker_cleanup(void)
 
 static void ic_notify(uint64_t signal, IC_HMI_ON_OFF val)
 {
-	fprintf(stdout, "Signal change notify %016lx , val=%1d\n", signal, val);
+	fprintf(stdout, "Signal change notify %016lx , val=%1d\r", signal, val);
 }
 
 int main(int argc, char *argv[])
