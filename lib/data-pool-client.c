@@ -40,8 +40,8 @@ static bool data_pool_packet_check_v1(struct S_AGLCLUSTER_SERVICE_PACKETHEADER_V
  * Event handler for receive packet
  *
  * @param [in]	event		Socket event source object
- * @param [in]	fd			File discriptor for socket session
- * @param [in]	revents		Active event (epooll)
+ * @param [in]	fd			File descriptor for socket session
+ * @param [in]	revents		Active event (epoll)
  * @param [in]	userdata	Pointer to data_pool_service_handle
  * @return int	 0 success
  *				-1 internal error

@@ -18,6 +18,10 @@
 #ifndef CLUSTER_API_H
 #define CLUSTER_API_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
 	IC_HMI_OFF = 0,
 	IC_HMI_ON,
@@ -32,5 +36,8 @@ typedef enum {
 
 bool clusterInit(void);
 bool clusterTerm(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CLUSTER_API_H

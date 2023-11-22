@@ -37,7 +37,7 @@ typedef struct s_data_pool_client_sdevent *data_pool_client_handle_sdevent;
  * Event handler for server session socket
  *
  * @param [in]	event		Socket event source object
- * @param [in]	fd			File discriptor for socket session
+ * @param [in]	fd			File descriptor for socket session
  * @param [in]	revents		Active event (epooll)
  * @param [in]	userdata	Pointer to data_pool_service_handle
  * @return int	 0 success

@@ -5,6 +5,7 @@ bin_PROGRAMS = cluster_service
 
 cluster_service_SOURCES = \
 	data-pool-service.c \
+	cluster-service-util.c \
 	cluster-service.c \
 	demo-data-generator.c
 

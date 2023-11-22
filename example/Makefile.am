@@ -4,14 +4,13 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 bin_PROGRAMS = cluster_client
 
 cluster_client_SOURCES = \
+	../src/cluster-service-util.c \
 	cluster-client.c 
 
 # options
 # Additional library
 cluster_client_LDADD = \
-	$(top_srcdir)/lib/libcluster_service_client.a \
-	$(top_srcdir)/lib/libcluster_service_common.a \
-	$(top_srcdir)/lib/libcluster_service_static_configurator.a \
+	$(top_srcdir)/lib/libcluster-api-systemd.la \
 	-lrt -lpthread \
 	@LIBSYSTEMD_LIBS@ 
 
@@ -19,6 +18,7 @@ cluster_client_LDADD = \
 cluster_client_CFLAGS = \
 	-g \
 	-I$(top_srcdir)/lib \
+	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/include \
 	@LIBSYSTEMD_CFLAGS@ \
 	-D_GNU_SOURCE

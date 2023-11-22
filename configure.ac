@@ -62,7 +62,9 @@ PKG_CHECK_MODULES([GMOCK_MAIN], [gmock_main], , enable_test=no)
 
 # Checks for library functions.
 
-AC_CONFIG_FILES([Makefile 
+AC_CONFIG_FILES([Makefile
+                cluster_api.pc
+                cluster-api-systemd.pc
 				lib/Makefile
 				src/Makefile
 				example/Makefile
