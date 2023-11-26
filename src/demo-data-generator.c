@@ -60,6 +60,22 @@ static void do_demo(void)
 		}
 	}
 
+	// temp
+	{
+		if (((g_demo_timer.demo_count / 300) % 4) == 1) {
+			if ((g_demo_timer.demo_count % 300) == 0) {
+				int16_t temp_val = data_pool_get_o_temp_val();
+
+				if (temp_val == 35)
+					temp_val = 18;
+				else
+					temp_val = 35;
+
+				data_pool_set_o_temp_val(temp_val);
+			}
+		}
+	}
+
 	// Gear
 	{
 		if (((g_demo_timer.demo_count / 300) % 4) == 1) {
