@@ -24,6 +24,7 @@ static struct s_demo_data_timer g_demo_timer;
 
 const uint64_t g_demo_data_update_interval = 10 * 1000; // usec
 
+static int g_demo_gear = 0;
 
 static void do_demo(void)
 {
@@ -55,6 +56,30 @@ static void do_demo(void)
 			} else {
 				uint32_t tacho_val = (100 - (g_demo_timer.demo_count % 500)) * 70 + 1000;
 				data_pool_set_tacho_analog_val(tacho_val);
+			}
+		}
+	}
+
+	// Gear
+	{
+		if (((g_demo_timer.demo_count / 300) % 4) == 1) {
+			if ((g_demo_timer.demo_count % 300) == 0) {
+
+				if (g_demo_gear == 0) {
+					data_pool_set_gear_at_val(IC_HMI_AT_OFF);
+				} else if (g_demo_gear == 1) {
+					data_pool_set_gear_at_val(IC_HMI_AT_PARKING);
+				} else if (g_demo_gear == 2) {
+					data_pool_set_gear_at_val(IC_HMI_AT_REVERSE);
+				} else if (g_demo_gear == 3) {
+					data_pool_set_gear_at_val(IC_HMI_AT_NEUTRAL);
+				} else if (g_demo_gear == 4) {
+					data_pool_set_gear_at_val(IC_HMI_AT_DRIVE);
+				} else if (g_demo_gear == 5) {
+					data_pool_set_gear_at_val(IC_HMI_AT_BRAKE);
+				}
+
+				g_demo_gear = (g_demo_gear + 1) % 6;
 			}
 		}
 	}
